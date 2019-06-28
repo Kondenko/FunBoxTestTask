@@ -4,7 +4,7 @@
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 # User-specific stuff
-.idea/**/workspace.xml
+.idea/
 .idea/**/tasks.xml
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
@@ -21,10 +21,6 @@
 .idea/**/dynamic.xml
 .idea/**/uiDesigner.xml
 .idea/**/dbnavigator.xml
-
-# Gradle
-.idea/**/gradle.xml
-.idea/**/libraries
 
 # Gradle and Maven with auto-import
 # When using Gradle or Maven with auto-import, you should exclude module files,
@@ -107,17 +103,7 @@ captures/
 
 # IntelliJ
 *.iml
-.idea/workspace.xml
-.idea/tasks.xml
-.idea/gradle.xml
-.idea/assetWizardSettings.xml
-.idea/dictionaries
-.idea/libraries
-# Android Studio 3 in .gitignore file.
-.idea/caches
-.idea/modules.xml
-# Comment next line if keeping position of elements in Navigation Editor is relevant for you
-.idea/navEditor.xml
+
 
 # Keystore files
 # Uncomment the following lines if you do not want to check your keystore files in.
