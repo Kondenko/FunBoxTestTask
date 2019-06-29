@@ -16,7 +16,6 @@ import kotlinx.android.synthetic.main.fragment_store.view.*
 import kotlinx.android.synthetic.main.item_store_front_good.view.*
 import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
-import java.text.DecimalFormat
 
 class FragmentStore : FragmentGoods() {
 
@@ -32,8 +31,8 @@ class FragmentStore : FragmentGoods() {
         adapterGoods = AdapterGoods(view.context, R.layout.item_store_front_good) { itemView, item ->
             with(itemView) {
                 itemStoreFrontTextviewName.text = item.name
-                itemStoreFrontTextviewPrice.text = DecimalFormat("0.#").format(item.price).toString()
-                itemStoreFrontTextviewQuantity.text = context?.getString(R.string.backend_quantity, item.quantity)
+                itemStoreFrontTextviewPrice.text = item.displayPrice
+                itemStoreFrontTextviewQuantity.text = item.displayQuantity
             }
         }
         view.store_front_viewpager.adapter = adapterGoods

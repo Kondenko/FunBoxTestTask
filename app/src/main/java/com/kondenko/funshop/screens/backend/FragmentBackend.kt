@@ -16,7 +16,6 @@ import kotlinx.android.synthetic.main.fragment_backend.view.*
 import kotlinx.android.synthetic.main.item_backend_good.view.*
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import timber.log.Timber
-import java.text.DecimalFormat
 
 class FragmentBackend : FragmentGoods() {
 
@@ -32,8 +31,8 @@ class FragmentBackend : FragmentGoods() {
         adapterGoods = AdapterGoods(view.context, R.layout.item_backend_good) { itemView, item ->
             with(itemView) {
                 itemAdminTextviewName.text = item.name
-                itemAdminTextviewPrice.text = DecimalFormat("0.#").format(item.price).toString()
-                itemAdminTextviewQuantity.text = context.getString(R.string.backend_quantity, item.quantity)
+                itemAdminTextviewPrice.text = item.displayPrice
+                itemAdminTextviewQuantity.text = item.displayQuantity
             }
         }
         with(view.backendRecyclerViewGoods) {

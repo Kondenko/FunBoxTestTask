@@ -12,7 +12,8 @@ import java.io.InputStream
 import java.io.InputStreamReader
 import java.util.regex.Matcher
 
-fun <T> LiveData<T>.subscribe(lifecycleOwner: LifecycleOwner, action: (T) -> Unit) = observe(lifecycleOwner, Observer(action))
+fun <T> LiveData<T>.subscribe(lifecycleOwner: LifecycleOwner, action: (T) -> Unit) =
+    observe(lifecycleOwner, Observer(action))
 
 fun View.animate(animation: ViewPropertyAnimator.() -> ViewPropertyAnimator) {
     animate().animation().start()

@@ -4,7 +4,7 @@
     <string name="nav_store_front">Store Front</string>
     <string name="nav_backend">Backend</string>
 
-    <string name="backend_price">%d₽</string>
-    <string name="backend_quantity">%d шт.</string>
+    <string name="item_good_price">%s₽</string>
+    <string name="item_good_quantity">%d шт.</string>
 
 </resources>
