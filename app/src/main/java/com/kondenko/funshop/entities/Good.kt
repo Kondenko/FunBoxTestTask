@@ -2,7 +2,6 @@ package com.kondenko.funshop.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.Query
 
 @Entity
 data class Good(

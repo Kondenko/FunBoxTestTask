@@ -3,7 +3,7 @@ package com.kondenko.funshop.data
 import com.kondenko.funshop.entities.Good
 import io.reactivex.Completable
 
-class AppGoodsRepository(private val goodsDao: GoodsDao) {
+class GoodsRepository(private val goodsDao: GoodsDao) {
 
     fun getGoods() = goodsDao.getGoods()
 
