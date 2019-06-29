@@ -6,9 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.kondenko.funshop.R
+import com.kondenko.funshop.screens.flux.Action
 import com.kondenko.funshop.screens.viewmodel.BuyerViewModel
 import com.kondenko.funshop.screens.viewmodel.GoodsViewModel
+import com.kondenko.funshop.utils.subscribe
 import org.koin.android.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
 class FragmentStore : Fragment() {
 
@@ -19,7 +22,10 @@ class FragmentStore : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        vm.state().subscribe(viewLifecycleOwner) {
+            Timber.d("Store state updated: $it")
+        }
+        vm(Action.Buyer.GetGoods)
     }
 
 }

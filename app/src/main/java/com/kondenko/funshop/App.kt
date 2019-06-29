@@ -1,7 +1,7 @@
 package com.kondenko.funshop
 
 import android.app.Application
-import com.kondenko.funshop.dependencies.modulesList
+import com.kondenko.funshop.dependencies.getModules
 import com.kondenko.funshop.utils.TimberLogger
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -14,7 +14,7 @@ class App : Application() {
         Timber.plant(Timber.DebugTree())
         startKoin {
             androidContext(this@App)
-            modules(modulesList)
+            modules(getModules())
             logger(TimberLogger())
         }
     }
