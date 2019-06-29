@@ -18,44 +18,47 @@
             tools:text="Apple iPhone XS 256Gb Rose Gold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline3"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginBottom="4dp"
             app:layout_constraintBottom_toTopOf="@+id/itemStoreFrontTextviewPrice"
-            app:layout_constraintEnd_toStartOf="@+id/itemStoreFrontTextviewQuantity"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintVertical_chainStyle="packed"
-            app:layout_constraintHorizontal_bias="1.0"/>
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:textAlignment="center"/>
 
     <TextView
             android:id="@+id/itemStoreFrontTextviewQuantity"
             tools:text="4"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="19dp"
             android:ellipsize="end"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="@+id/itemStoreFrontTextviewPrice"
-            app:layout_constraintTop_toTopOf="@+id/itemStoreFrontTextviewName"
             app:layout_constraintStart_toEndOf="@+id/itemStoreFrontTextviewName"
             android:layout_marginStart="8dp"
-            app:layout_constraintHorizontal_bias="1.0"/>
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="32dp"
+            app:layout_constraintTop_toBottomOf="@+id/itemStoreFrontTextviewPrice"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintStart_toStartOf="parent"/>
 
     <TextView
             android:id="@+id/itemStoreFrontTextviewPrice"
             tools:text="100000"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            app:layout_constraintStart_toStartOf="parent"
+            android:textAppearance="@android:style/TextAppearance.Material.Subhead"
+            app:layout_constraintStart_toStartOf="@+id/itemStoreFrontTextviewName"
             app:layout_constraintTop_toBottomOf="@+id/itemStoreFrontTextviewName"
             tools:layout_conversion_wrapWidth="126"
             tools:layout_conversion_wrapHeight="50"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginEnd="8dp"
             app:layout_constraintEnd_toEndOf="@+id/itemStoreFrontTextviewName"
-            app:layout_constraintHorizontal_bias="0.0"/>
+            app:layout_constraintBottom_toTopOf="@+id/itemStoreFrontTextviewQuantity"
+            android:layout_marginTop="8dp"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
