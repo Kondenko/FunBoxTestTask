@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">FunShop</string>
+
     <string name="nav_store_front">Store Front</string>
     <string name="nav_backend">Backend</string>
+
+    <string name="backend_quantity">%d шт.</string>
+
 </resources>

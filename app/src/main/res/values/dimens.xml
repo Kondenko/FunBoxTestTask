@@ -1,5 +1,9 @@
 <resources>
     <dimen name="all_horizontal_margin">16dp</dimen>
     <dimen name="all_vertical_margin">16dp</dimen>
+
     <dimen name="bottomnav_height">54dp</dimen>
+
+    <dimen name="item_backend_padding">16dp</dimen>
+
 </resources>

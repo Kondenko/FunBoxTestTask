@@ -5,6 +5,6 @@ import io.reactivex.Observable
 
 interface GoodsProvider {
 
-    fun getGoods(): Observable<Good>
+    fun getGoods(): Observable<List<Good>>
 
 }

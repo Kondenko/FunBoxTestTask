@@ -10,6 +10,7 @@ import com.kondenko.funshop.data.GoodsProvider
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.rxkotlin.toObservable
 import io.reactivex.schedulers.Schedulers
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.scope.Scope
@@ -41,6 +42,7 @@ class PersistenceModule : ModuleCreator, ScopeCallback {
         databaseInitialization = initialGoodsProvider
             .getGoods()
             .doOnNext { Timber.d("Storing good to database: $it") }
+            .flatMap { it.toObservable() }
             .flatMapCompletable { goodsDao.insert(it) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

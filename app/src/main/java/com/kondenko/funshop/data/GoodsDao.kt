@@ -12,7 +12,7 @@ import io.reactivex.Observable
 interface GoodsDao : GoodsProvider {
 
     @Query("SELECT * FROM good")
-    override fun getGoods(): Observable<Good>
+    override fun getGoods(): Observable<List<Good>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(good: Good): Completable

@@ -30,14 +30,13 @@ fun Matcher.allSubgroups(): Map<String?, String?> {
     return groups
 }
 
-fun <R> InputStream.linesToPublisher(publisher: Subscriber<R>, transform: (String?) -> R) {
+fun InputStream.parseLines(publisher: Subscriber<in String>) {
     var reader: BufferedReader? = null
     try {
         reader = BufferedReader(InputStreamReader(this))
         do {
             val line = reader.readLine()
-            val item = transform(line)
-            item?.let { publisher.onNext(it) }
+            line?.let { publisher.onNext(it) }
         } while (line != null)
     } catch (e: IOException) {
         publisher.onError(e)

@@ -3,9 +3,8 @@ package com.kondenko.funshop.data
 import android.content.Context
 import com.kondenko.funshop.entities.Good
 import com.kondenko.funshop.utils.allSubgroups
-import com.kondenko.funshop.utils.linesToPublisher
+import com.kondenko.funshop.utils.parseLines
 import io.reactivex.Observable
-import java.lang.IllegalArgumentException
 import java.util.regex.Pattern
 
 class CsvGoodsProvider(private val context: Context) : GoodsProvider {
@@ -14,11 +13,11 @@ class CsvGoodsProvider(private val context: Context) : GoodsProvider {
 
     private val csvLineRegex = "\"(.*?)\""
 
-    override fun getGoods(): Observable<Good> = Observable.fromPublisher {
-        context.assets.open(fileName).linesToPublisher(it) {
-            it?.parseGood()
-        }
-    }
+    override fun getGoods() =
+        Observable.fromPublisher<String> { context.assets.open(fileName).parseLines(it) }
+            .map { it.parseGood() }
+            .toList()
+            .toObservable()
 
     private fun String.parseGood(): Good {
         val matches = Pattern.compile(csvLineRegex).matcher(this).allSubgroups().values.toList()
