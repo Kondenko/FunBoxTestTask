@@ -31,7 +31,8 @@ class ActivityMain : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         selectedTag = savedInstanceState?.getString(keySelectedTag)
-        selectStore()
+        if (selectedTag == tagBackend) selectBackend()
+        else selectStore()
         bottomnav.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.navigation_store -> selectStore()
