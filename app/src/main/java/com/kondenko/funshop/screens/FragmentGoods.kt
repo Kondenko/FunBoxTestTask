@@ -10,7 +10,7 @@ import com.kondenko.funshop.entities.Good
 import com.kondenko.funshop.screens.backend.AdapterGoods
 import com.kondenko.funshop.screens.flux.Action
 import com.kondenko.funshop.screens.flux.State
-import com.kondenko.funshop.screens.viewmodel.GoodsViewModel
+import com.kondenko.funshop.screens.viewmodel.GoodsViewModelImpl
 import com.kondenko.funshop.utils.subscribe
 
 abstract class FragmentGoods : Fragment() {
@@ -26,11 +26,11 @@ abstract class FragmentGoods : Fragment() {
         viewModel().state().subscribe(viewLifecycleOwner, ::onStateChanged)
     }
 
-    abstract fun viewModel(): GoodsViewModel
+    abstract fun viewModel(): GoodsViewModelImpl
 
     abstract fun onStateChanged(state: State<List<Good>>)
 
-    protected fun State.Success<List<Good>>.render() {
+    protected fun State.Success.ItemsFetched<List<Good>>.render() {
         adapterGoods.items = this.data
     }
 

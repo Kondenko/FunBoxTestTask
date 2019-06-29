@@ -11,15 +11,16 @@ import com.kondenko.funshop.screens.FragmentGoods
 import com.kondenko.funshop.screens.flux.Action
 import com.kondenko.funshop.screens.flux.State
 import com.kondenko.funshop.screens.viewmodel.AdminViewModel
-import com.kondenko.funshop.screens.viewmodel.GoodsViewModel
+import com.kondenko.funshop.screens.viewmodel.GoodsViewModelImpl
 import kotlinx.android.synthetic.main.fragment_backend.view.*
 import kotlinx.android.synthetic.main.item_backend_good.view.*
 import org.koin.android.viewmodel.ext.android.sharedViewModel
+import timber.log.Timber
 import java.text.DecimalFormat
 
 class FragmentBackend : FragmentGoods() {
 
-    private val vm: AdminViewModel by sharedViewModel<GoodsViewModel>()
+    private val vm: AdminViewModel by sharedViewModel<GoodsViewModelImpl>()
 
     override lateinit var adapterGoods: AdapterGoods
 
@@ -42,11 +43,11 @@ class FragmentBackend : FragmentGoods() {
         vm(Action.Admin.GetGoods)
     }
 
-    override fun viewModel(): GoodsViewModel = vm as GoodsViewModel
+    override fun viewModel(): GoodsViewModelImpl = vm as GoodsViewModelImpl
 
     override fun onStateChanged(state: State<List<Good>>) = when (state) {
-        is State.Success -> state.render()
+        is State.Success.ItemsFetched<List<Good>> -> state.render()
         else -> Unit
-    }
+    }.also { Timber.d("Backend state updated: $state") }
 
 }

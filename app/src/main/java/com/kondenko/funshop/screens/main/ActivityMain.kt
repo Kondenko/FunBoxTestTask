@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import com.kondenko.funshop.R
 import com.kondenko.funshop.screens.backend.FragmentBackend
 import com.kondenko.funshop.screens.store.FragmentStore
-import com.kondenko.funshop.screens.viewmodel.GoodsViewModel
+import com.kondenko.funshop.screens.viewmodel.GoodsViewModelImpl
 import com.kondenko.funshop.utils.animate
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -25,7 +25,7 @@ class ActivityMain : AppCompatActivity() {
     private val keySelectedTag = "selectedTag"
     private var selectedTag: String? = null
 
-    private val goodsViewModel by viewModel<GoodsViewModel>()
+    private val goodsViewModel by viewModel<GoodsViewModelImpl>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
