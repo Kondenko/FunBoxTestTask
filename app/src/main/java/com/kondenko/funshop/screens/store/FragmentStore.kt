@@ -7,9 +7,9 @@ import android.view.ViewAnimationUtils
 import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
-import androidx.core.animation.addListener
+import androidx.core.animation.doOnEnd
 import androidx.core.view.doOnPreDraw
-import androidx.core.view.isGone
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.kondenko.funshop.R
 import com.kondenko.funshop.entities.Good
@@ -49,7 +49,7 @@ class FragmentStore : FragmentGoods() {
                         }
                         if (payloads.contains(AdapterGoods.Payload.PurchaseCompleted)) {
                             itemStoreFrontImageViewDone.animateCircularReveal {
-                                it.fadeOut {
+                                fadeOut {
                                     viewModel(Action.Buyer.CleanUpLastBoughtItem)
                                 }
                             }
@@ -79,17 +79,18 @@ class FragmentStore : FragmentGoods() {
         super.updateData(data.filter { it.quantity > 0 })
     }
 
-    private fun View.animateCircularReveal(onEnd: (View) -> Unit) {
+    private fun View.animateCircularReveal(onEnd: View.() -> Unit) {
         isVisible = true
+        alpha = 1f
         doOnPreDraw {
             val cx = width / 2
             val cy = bottom
             val startRadius = 0f
             val endRadius = hypot(cx.toDouble(), cy.toDouble()).toFloat()
-            ViewAnimationUtils.createCircularReveal(this, cx, cy, startRadius, endRadius).apply {
-                duration = 300
+            with(ViewAnimationUtils.createCircularReveal(this, cx, cy, startRadius, endRadius)) {
+                duration = 300L
                 interpolator = DecelerateInterpolator()
-                addListener(onEnd = { onEnd(this@animateCircularReveal) }, onCancel = { Timber.w("Reveal cancelled")})
+                doOnEnd { this@animateCircularReveal.onEnd() }
                 start()
             }
         }
@@ -99,8 +100,10 @@ class FragmentStore : FragmentGoods() {
         startDelay = 1000L
         duration = 150L
         interpolator = AccelerateInterpolator()
-        withEndAction { isGone = true }
-        withEndAction(onEnd)
+        withEndAction {
+            isInvisible = true
+            onEnd()
+        }
         alpha(0f)
     }
 
