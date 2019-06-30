@@ -3,7 +3,13 @@ package com.kondenko.funshop.screens.store
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewAnimationUtils
 import android.view.ViewGroup
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.DecelerateInterpolator
+import androidx.core.animation.addListener
+import androidx.core.view.doOnPreDraw
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.kondenko.funshop.R
 import com.kondenko.funshop.entities.Good
@@ -13,10 +19,12 @@ import com.kondenko.funshop.screens.flux.Action
 import com.kondenko.funshop.screens.flux.State
 import com.kondenko.funshop.screens.viewmodel.BuyerViewModel
 import com.kondenko.funshop.screens.viewmodel.GoodsViewModelImpl
+import com.kondenko.funshop.utils.animate
 import kotlinx.android.synthetic.main.fragment_store.view.*
 import kotlinx.android.synthetic.main.item_store_front_good.view.*
 import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
+import kotlin.math.hypot
 
 class FragmentStore : FragmentGoods() {
 
@@ -40,11 +48,11 @@ class FragmentStore : FragmentGoods() {
                             viewModel(Action.Buyer.Buy(item))
                         }
                         if (payloads.contains(AdapterGoods.Payload.PurchaseCompleted)) {
-                            // TODO Show a successful purchase animation
-                            postDelayed(
-                                    { viewModel(Action.Buyer.CleanUpLastBoughtItem) },
-                                    2000
-                            )
+                            itemStoreFrontImageViewDone.animateCircularReveal {
+                                it.fadeOut {
+                                    viewModel(Action.Buyer.CleanUpLastBoughtItem)
+                                }
+                            }
                         }
                         itemStoreFrontProgressBar?.isVisible = isBeingProcessed
                         itemStoreFrontButtonBuy?.isEnabled = !isBeingProcessed
@@ -69,6 +77,31 @@ class FragmentStore : FragmentGoods() {
 
     override fun updateData(data: List<Good>) {
         super.updateData(data.filter { it.quantity > 0 })
+    }
+
+    private fun View.animateCircularReveal(onEnd: (View) -> Unit) {
+        isVisible = true
+        doOnPreDraw {
+            val cx = width / 2
+            val cy = bottom
+            val startRadius = 0f
+            val endRadius = hypot(cx.toDouble(), cy.toDouble()).toFloat()
+            ViewAnimationUtils.createCircularReveal(this, cx, cy, startRadius, endRadius).apply {
+                duration = 300
+                interpolator = DecelerateInterpolator()
+                addListener(onEnd = { onEnd(this@animateCircularReveal) }, onCancel = { Timber.w("Reveal cancelled")})
+                start()
+            }
+        }
+    }
+
+    private fun View.fadeOut(onEnd: () -> Unit) = animate {
+        startDelay = 1000L
+        duration = 150L
+        interpolator = AccelerateInterpolator()
+        withEndAction { isGone = true }
+        withEndAction(onEnd)
+        alpha(0f)
     }
 
 }
