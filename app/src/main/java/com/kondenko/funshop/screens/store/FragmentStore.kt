@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.kondenko.funshop.R
 import com.kondenko.funshop.entities.Good
+import com.kondenko.funshop.screens.AdapterGoods
 import com.kondenko.funshop.screens.FragmentGoods
-import com.kondenko.funshop.screens.backend.AdapterGoods
 import com.kondenko.funshop.screens.flux.Action
 import com.kondenko.funshop.screens.flux.State
 import com.kondenko.funshop.screens.viewmodel.BuyerViewModel
@@ -29,36 +29,37 @@ class FragmentStore : FragmentGoods() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        adapterGoods = AdapterGoods(view.context, R.layout.item_store_front_good) { itemView, item ->
-            with(itemView) {
-                itemStoreFrontTextviewName.text = item.name
-                itemStoreFrontTextviewPrice.text = item.displayPrice
-                itemStoreFrontTextviewQuantity.text = item.displayQuantity
-                itemStoreFrontButtonBuy.setOnClickListener {
-                    viewModel(Action.Buyer.Buy(item))
+        adapterGoods =
+            AdapterGoods(view.context, R.layout.item_store_front_good) { itemView, item ->
+                with(itemView) {
+                    val isBeingProcessed = item.metadata?.isBeingProcessed == true
+                    itemStoreFrontTextviewName.text = item.name
+                    itemStoreFrontTextviewPrice.text = item.metadata?.displayPrice
+                    itemStoreFrontTextviewQuantity.text = item.metadata?.displayQuantity
+                    itemStoreFrontProgressBar?.isVisible = isBeingProcessed
+                    itemStoreFrontButtonBuy?.isEnabled = !isBeingProcessed
+                    itemStoreFrontButtonBuy.setOnClickListener {
+                        viewModel(Action.Buyer.Buy(item))
+                    }
                 }
             }
-        }
         view.store_front_viewpager.run {
             adapter = adapterGoods
         }
-        viewModel(Action.Buyer.GetGoods)
     }
 
     override fun viewModel(): GoodsViewModelImpl = viewModel as GoodsViewModelImpl
 
-    override fun onStateChanged(state: State<List<Good>>) = when (state) {
-        is State.Success.ItemsFetched -> state.render()
-        is State.Success.ItemBought, is State.Error -> playPurchaseAnimation(false)
-        is State.Loading.Purchase -> playPurchaseAnimation(true)
-        else -> Unit
-    }.also { Timber.d("Store state updated: $state") }
-
-    private fun playPurchaseAnimation(play: Boolean) {
-        view?.apply {
-            itemStoreFrontProgressBar?.isVisible = play
-            itemStoreFrontButtonBuy?.isEnabled = !play
-        }
+    override fun onStateChanged(state: State<List<Good>>) {
+        when (state) {
+            is State.Success -> updateData(state.data)
+            is State.Loading.Purchase -> updateData(state.data)
+            is Error -> state.data?.let(::updateData)
+            else -> return
+        }.also { Timber.d("Store state updated: $state") }
     }
 
+    override fun updateData(data: List<Good>) {
+        super.updateData(data.filter { it.quantity > 0 })
+    }
 }

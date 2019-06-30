@@ -12,17 +12,15 @@ data class Good(
     val price: Double,
     val quantity: Long,
     @Ignore
-    val displayPrice: String? = null,
-    @Ignore
-    val displayQuantity: String? = null
+    val metadata: Metadata?
 ) {
-
-    // For room
-    constructor(
-        id: Int? = null,
-        name: String,
-        price: Double,
-        quantity: Long
-    ) : this(id, name, price, quantity, null, null)
-
+    // For Room
+    constructor(id: Int? = null, name: String, price: Double, quantity: Long) :
+            this(id, name, price, quantity, null)
 }
+
+data class Metadata(
+    val displayPrice: String,
+    val displayQuantity: String,
+    val isBeingProcessed: Boolean
+)

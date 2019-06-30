@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 abstract class BaseAdapter<T, VH : BaseAdapter<T, VH>.BaseViewHolder>(protected val context: Context)
     : RecyclerView.Adapter<VH>() {
 
-    open var items: List<T> by diffUtil(emptyList(), ::getDiffCallback)
+    open var items: List<T> by  diffUtil(emptyList(), ::getDiffCallback)
 
     @CallSuper
     override fun onBindViewHolder(holder: VH, position: Int) = holder.bind(items[position])

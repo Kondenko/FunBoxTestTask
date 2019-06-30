@@ -16,7 +16,7 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 
 class GoodsViewModelImpl(
-    val getGoods: GetGoods,
+    getGoods: GetGoods,
     val addGood: AddGood,
     val buyGood: BuyGood
 ) : ViewModel(), BuyerViewModel, AdminViewModel {
@@ -26,46 +26,50 @@ class GoodsViewModelImpl(
     private val disposables = CompositeDisposable()
 
     init {
-        state.value = State.Loading.Goods
+        state.value = Loading.Goods
+        disposables += getGoods(null)
+            .subscribeBy(
+                onNext = {
+                    val newState = when {
+                        it.isEmpty() -> Empty
+                        state.value is Loading.Purchase -> Success.ItemBought(it)
+                        else -> Success.ItemsFetched(it)
+                    }
+                    setState(newState)
+                },
+                onError = { setErrorState(it, state.value) }
+            )
     }
 
     override fun state(): LiveData<State<List<Good>>> = state
 
     override fun invoke(action: Action.Buyer) {
+        val currentState = state.value
         disposables += when (action) {
-            is Action.Buyer.GetGoods -> {
-                getGoods(null)
-                    .map { it.filter { it.quantity > 0 } }
-                    .subscribeBy(
-                        onSuccess = {
-                            setState(it)
-                        },
-                        onError = { setState(it) }
-                    )
-            }
             is Action.Buyer.Buy -> {
                 buyGood(action.good)
-                    .doOnSubscribe { setState(State.Loading.Purchase(action.good)) }
-                    .subscribeBy(
-                        onComplete = { setState(State.Success.ItemBought(listOf(action.good))) },
-                        onError = { setState(it) }
-                    )
+                    .doOnSubscribe {
+                        currentState?.data?.let { currentData ->
+                            val itemMetadata = action.good.metadata?.copy(isBeingProcessed = true)
+                            val processedItem = action.good.copy(metadata = itemMetadata)
+                            val loadingState = Loading.Purchase(currentData.replace(processedItem) {
+                                it.id == processedItem.id
+                            })
+                            setState(loadingState)
+                        }
+                    }
+                    .subscribeBy(onError = { setErrorState(it, currentState) })
             }
         }
     }
 
     override fun invoke(action: Action.Admin) {
+        val currentState = state.value
         when (action) {
-            is Action.Admin.GetGoods -> {
-                disposables += getGoods(null).subscribeBy(
-                    onNext = { setState(it) },
-                    onError = { setState(it) }
-                )
-            }
             is Action.Admin.Create -> {
                 disposables += addGood(action.good).subscribeBy(
-                    onComplete = { state.value = State.Success.ItemAdded(listOf(action.good)) },
-                    onError = ::setState
+                    onComplete = { state.value = Success.ItemAdded(listOf(action.good)) },
+                    onError = { setErrorState(it, currentState) }
                 )
             }
             else -> return
@@ -76,12 +80,10 @@ class GoodsViewModelImpl(
         this.state.value = state
     }
 
-    private fun setState(goods: List<Good>) = setState(
-        if (goods.isEmpty()) State.Empty
-        else State.Success.ItemsFetched(goods)
+    private fun setErrorState(throwable: Throwable, currentState: State<List<Good>>?) = setState(
+        if (currentState is Success) Error(throwable, currentState.data)
+        else Error(throwable)
     )
-
-    private fun setState(throwable: Throwable) = setState(State.Error(throwable))
 
 }
 

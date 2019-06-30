@@ -5,23 +5,21 @@ import androidx.recyclerview.widget.DiffUtil
 class SimpleCallback<T>(
     private val oldList: List<T>,
     private val newList: List<T>,
-    private val areItemsTheSame: ((oldItem: T, newItem: T) -> Boolean)? = null,
-    private val areContentsTheSame: ((oldItem: T, newItem: T) -> Boolean)? = null,
+    private val areItemsTheSame: ((oldItem: T, newItem: T) -> Boolean) = { old, new ->
+        old == new
+    },
+    private val areContentsTheSame: ((oldItem: T, newItem: T) -> Boolean) = { old, new ->
+        old == new
+    },
     private val getChangePayload: ((oldItem: T, newItem: T) -> Any?)? = null
 ) : DiffUtil.Callback() {
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return areItemsTheSame?.invoke(
-            oldList[oldItemPosition],
-            newList[newItemPosition]
-        ) ?: oldList[oldItemPosition] == newList[newItemPosition]
+        return areItemsTheSame(oldList[oldItemPosition], newList[newItemPosition])
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return areContentsTheSame?.invoke(
-            oldList[oldItemPosition],
-            newList[newItemPosition]
-        ) ?: oldList[oldItemPosition] == newList[newItemPosition]
+        return areContentsTheSame(oldList[oldItemPosition], newList[newItemPosition])
     }
 
     override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {

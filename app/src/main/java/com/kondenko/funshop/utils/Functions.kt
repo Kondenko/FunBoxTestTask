@@ -1,7 +1,5 @@
 package com.kondenko.funshop.utils
 
-import android.view.View
-import android.view.ViewPropertyAnimator
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -15,9 +13,7 @@ import java.util.regex.Matcher
 fun <T> LiveData<T>.subscribe(lifecycleOwner: LifecycleOwner, action: (T) -> Unit) =
     observe(lifecycleOwner, Observer(action))
 
-fun View.animate(animation: ViewPropertyAnimator.() -> ViewPropertyAnimator) {
-    animate().animation().start()
-}
+fun <T> Iterable<T>.replace(replacementItem: T, predicate: (T) -> Boolean) = map { if (predicate(it)) replacementItem else it  }
 
 fun Matcher.allSubgroups(): Map<String?, String?> {
     val groups = mutableMapOf<String?, String?>()

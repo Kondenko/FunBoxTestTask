@@ -1,17 +1,20 @@
 package com.kondenko.funshop.screens.flux
 
-import com.kondenko.funshop.entities.Good
+sealed class State<out T>(open val data: T?) {
 
-sealed class State<out T> {
-    sealed class Success<T> : State<T>() {
-        data class ItemsFetched<T>(val data: T) : Success<T>()
-        data class ItemAdded<T>(val data: T?): Success<T>()
-        data class ItemBought<T>(val data: T?): Success<T>()
+    sealed class Success<T>(override val data: T) : State<T>(data) {
+        data class ItemsFetched<T>(override val data: T) : Success<T>(data)
+        data class ItemAdded<T>(override val data: T) : Success<T>(data)
+        data class ItemBought<T>(override val data: T) : Success<T>(data)
     }
-    data class Error(val throwable: Throwable) : State<Nothing>()
-    object Empty : State<Nothing>()
-    sealed class Loading : State<Nothing>() {
-        object Goods : Loading()
-        data class Purchase(val good: Good) : Loading()
+
+    sealed class Loading<T>(override val data: T?) : State<T>(data) {
+        object Goods : Loading<Nothing>(null)
+        data class Purchase<T>(override val data: T) : Loading<T>(data)
     }
+
+    data class Error<T>(val throwable: Throwable, override val data: T? = null) : State<T>(data)
+
+    object Empty : State<Nothing>(null)
+
 }

@@ -1,6 +1,7 @@
 package com.kondenko.funshop.data
 
 import com.kondenko.funshop.entities.Good
+import com.kondenko.funshop.entities.Metadata
 import io.reactivex.Completable
 
 class GoodsRepository(
@@ -11,10 +12,11 @@ class GoodsRepository(
     fun getGoods() = goodsDao.getGoods()
         .map {
             it.map {
-                it.copy(
+                it.copy(metadata = Metadata(
                     displayPrice = stringFormatter.formatPrice(it.price),
-                    displayQuantity = stringFormatter.formatQuantity(it.quantity)
-                )
+                    displayQuantity = stringFormatter.formatQuantity(it.quantity),
+                    isBeingProcessed = false
+                ))
             }
         }
 

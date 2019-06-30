@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.kondenko.funshop.R
 import com.kondenko.funshop.entities.Good
+import com.kondenko.funshop.screens.AdapterGoods
 import com.kondenko.funshop.screens.FragmentGoods
-import com.kondenko.funshop.screens.flux.Action
 import com.kondenko.funshop.screens.flux.State
 import com.kondenko.funshop.screens.viewmodel.AdminViewModel
 import com.kondenko.funshop.screens.viewmodel.GoodsViewModelImpl
@@ -28,24 +28,24 @@ class FragmentBackend : FragmentGoods() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        adapterGoods = AdapterGoods(view.context, R.layout.item_backend_good) { itemView, item ->
-            with(itemView) {
-                itemAdminTextviewName.text = item.name
-                itemAdminTextviewPrice.text = item.displayPrice
-                itemAdminTextviewQuantity.text = item.displayQuantity
+        adapterGoods =
+            AdapterGoods(view.context, R.layout.item_backend_good) { itemView, item ->
+                with(itemView) {
+                    itemAdminTextviewName.text = item.name
+                    itemAdminTextviewPrice.text = item.metadata?.displayPrice
+                    itemAdminTextviewQuantity.text = item.metadata?.displayQuantity
+                }
             }
-        }
         with(view.backendRecyclerViewGoods) {
             addItemDecoration(DividerItemDecoration(view.context, DividerItemDecoration.VERTICAL))
             this.adapter = adapterGoods
         }
-        vm(Action.Admin.GetGoods)
     }
 
     override fun viewModel(): GoodsViewModelImpl = vm as GoodsViewModelImpl
 
     override fun onStateChanged(state: State<List<Good>>) = when (state) {
-        is State.Success.ItemsFetched<List<Good>> -> state.render()
+        is State.Success.ItemsFetched<List<Good>> -> updateData(state.data)
         else -> Unit
     }.also { Timber.d("Backend state updated: $state") }
 
