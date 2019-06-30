@@ -25,24 +25,31 @@ class FragmentStore : FragmentGoods() {
     override lateinit var adapterGoods: AdapterGoods
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-        inflater.inflate(R.layout.fragment_store, container, false)
+            inflater.inflate(R.layout.fragment_store, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         adapterGoods =
-            AdapterGoods(view.context, R.layout.item_store_front_good) { itemView, item ->
-                with(itemView) {
-                    val isBeingProcessed = item.metadata?.isBeingProcessed == true
-                    itemStoreFrontTextviewName.text = item.name
-                    itemStoreFrontTextviewPrice.text = item.metadata?.displayPrice
-                    itemStoreFrontTextviewQuantity.text = item.metadata?.displayQuantity
-                    itemStoreFrontProgressBar?.isVisible = isBeingProcessed
-                    itemStoreFrontButtonBuy?.isEnabled = !isBeingProcessed
-                    itemStoreFrontButtonBuy.setOnClickListener {
-                        viewModel(Action.Buyer.Buy(item))
+                AdapterGoods(view.context, R.layout.item_store_front_good) { itemView, item, payloads ->
+                    with(itemView) {
+                        val isBeingProcessed = item.metadata?.isBeingProcessed == true
+                        itemStoreFrontTextviewName.text = item.name
+                        itemStoreFrontTextviewPrice.text = item.metadata?.displayPrice
+                        itemStoreFrontTextviewQuantity.text = item.metadata?.displayQuantity
+                        itemStoreFrontButtonBuy.setOnClickListener {
+                            viewModel(Action.Buyer.Buy(item))
+                        }
+                        if (payloads.contains(AdapterGoods.Payload.PurchaseCompleted)) {
+                            // TODO Show a successful purchase animation
+                            postDelayed(
+                                    { viewModel(Action.Buyer.CleanUpLastBoughtItem) },
+                                    2000
+                            )
+                        }
+                        itemStoreFrontProgressBar?.isVisible = isBeingProcessed
+                        itemStoreFrontButtonBuy?.isEnabled = !isBeingProcessed
                     }
                 }
-            }
         view.store_front_viewpager.run {
             adapter = adapterGoods
         }
@@ -52,8 +59,9 @@ class FragmentStore : FragmentGoods() {
 
     override fun onStateChanged(state: State<List<Good>>) {
         when (state) {
+            is State.Success.ItemBought -> adapterGoods.items = state.data
             is State.Success -> updateData(state.data)
-            is State.Loading.Purchase -> updateData(state.data)
+            is State.Loading.Purchase -> adapterGoods.items = state.data
             is Error -> state.data?.let(::updateData)
             else -> return
         }.also { Timber.d("Store state updated: $state") }
@@ -62,4 +70,5 @@ class FragmentStore : FragmentGoods() {
     override fun updateData(data: List<Good>) {
         super.updateData(data.filter { it.quantity > 0 })
     }
+
 }

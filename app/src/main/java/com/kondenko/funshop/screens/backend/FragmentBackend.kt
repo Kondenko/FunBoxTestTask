@@ -29,7 +29,7 @@ class FragmentBackend : FragmentGoods() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         adapterGoods =
-            AdapterGoods(view.context, R.layout.item_backend_good) { itemView, item ->
+            AdapterGoods(view.context, R.layout.item_backend_good) { itemView, item, _ ->
                 with(itemView) {
                     itemAdminTextviewName.text = item.name
                     itemAdminTextviewPrice.text = item.metadata?.displayPrice

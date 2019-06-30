@@ -1,5 +1,7 @@
 package com.kondenko.funshop.utils
 
+import android.view.View
+import android.view.ViewPropertyAnimator
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -14,6 +16,10 @@ fun <T> LiveData<T>.subscribe(lifecycleOwner: LifecycleOwner, action: (T) -> Uni
     observe(lifecycleOwner, Observer(action))
 
 fun <T> Iterable<T>.replace(replacementItem: T, predicate: (T) -> Boolean) = map { if (predicate(it)) replacementItem else it  }
+
+fun View.animate(animation: ViewPropertyAnimator.() -> ViewPropertyAnimator) {
+    animate().animation().start()
+}
 
 fun Matcher.allSubgroups(): Map<String?, String?> {
     val groups = mutableMapOf<String?, String?>()

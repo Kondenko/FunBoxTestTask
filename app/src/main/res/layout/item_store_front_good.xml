@@ -1,81 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/relativeLayout"
+    android:id="@+id/materialCardView"
+    style="@style/Widget.MaterialComponents.CardView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clickable="true"
-    android:focusable="true"
-    android:orientation="vertical"
-    android:paddingStart="@dimen/item_backend_padding"
-    android:paddingEnd="@dimen/item_backend_padding"
+    android:layout_marginStart="@dimen/item_store_front_margin_horizontal"
+    android:layout_marginTop="@dimen/item_store_front_margin_vertical"
+    android:layout_marginEnd="@dimen/item_store_front_margin_horizontal"
+    android:layout_marginBottom="@dimen/item_store_front_margin_vertical"
+    app:cardCornerRadius="8dp"
     >
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/item_backend_padding"
+        android:paddingEnd="@dimen/item_backend_padding"
+        >
 
-    <TextView
-        android:id="@+id/itemStoreFrontTextviewName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="4dp"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline3"
-        app:layout_constraintBottom_toTopOf="@+id/itemStoreFrontTextviewPrice"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed"
-        tools:text="Apple iPhone XS 256Gb Rose Gold"
-        />
+        <TextView
+            android:id="@+id/itemStoreFrontTextviewName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="4dp"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            app:layout_constraintBottom_toTopOf="@+id/itemStoreFrontTextviewPrice"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="Apple iPhone XS 256Gb Rose Gold"
+            />
 
-    <TextView
-        android:id="@+id/itemStoreFrontTextviewQuantity"
-        android:layout_width="wrap_content"
-        android:layout_height="19dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:ellipsize="end"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/itemStoreFrontTextviewName"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/itemStoreFrontTextviewPrice"
-        tools:text="4"
-        />
+        <TextView
+            android:id="@+id/itemStoreFrontTextviewQuantity"
+            android:layout_width="wrap_content"
+            android:layout_height="19dp"
+            android:layout_marginStart="124dp"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+            app:layout_constraintBottom_toBottomOf="@+id/itemStoreFrontTextviewPrice"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/itemStoreFrontTextviewPrice"
+            app:layout_constraintTop_toTopOf="@+id/itemStoreFrontTextviewPrice"
+            tools:text="4"
+            />
 
-    <TextView
-        android:id="@+id/itemStoreFrontTextviewPrice"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:textAppearance="@android:style/TextAppearance.Material.Subhead"
-        app:layout_constraintBottom_toTopOf="@+id/itemStoreFrontTextviewQuantity"
-        app:layout_constraintEnd_toEndOf="@+id/itemStoreFrontTextviewName"
-        app:layout_constraintStart_toStartOf="@+id/itemStoreFrontTextviewName"
-        app:layout_constraintTop_toBottomOf="@+id/itemStoreFrontTextviewName"
-        tools:layout_conversion_wrapHeight="50"
-        tools:layout_conversion_wrapWidth="126"
-        tools:text="100000"
-        />
+        <TextView
+            android:id="@+id/itemStoreFrontTextviewPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+            app:layout_constraintBottom_toTopOf="@id/itemStoreFrontButtonBuy"
+            app:layout_constraintEnd_toStartOf="@+id/itemStoreFrontTextviewQuantity"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="@+id/itemStoreFrontTextviewName"
+            app:layout_constraintTop_toBottomOf="@+id/itemStoreFrontTextviewName"
+            tools:layout_conversion_wrapHeight="50"
+            tools:layout_conversion_wrapWidth="126"
+            tools:text="100000"
+            />
 
 
-    <ProgressBar
+        <ProgressBar
+            android:id="@+id/itemStoreFrontProgressBar"
             style="?android:attr/progressBarStyle"
             android:layout_width="@dimen/item_store_front_progressbar_size"
             android:layout_height="@dimen/item_store_front_progressbar_size"
-            android:id="@+id/itemStoreFrontProgressBar"
             android:visibility="gone"
-            app:layout_constraintStart_toStartOf="@+id/itemStoreFrontButtonBuy"
             app:layout_constraintBottom_toBottomOf="@+id/itemStoreFrontButtonBuy"
-            app:layout_constraintTop_toTopOf="@+id/itemStoreFrontButtonBuy"
             app:layout_constraintEnd_toEndOf="@+id/itemStoreFrontButtonBuy"
-    />
+            app:layout_constraintStart_toStartOf="@+id/itemStoreFrontButtonBuy"
+            app:layout_constraintTop_toTopOf="@+id/itemStoreFrontButtonBuy"
+            tools:visibility="visible"
+            />
 
-    <com.google.android.material.button.MaterialButton
+        <ImageView
+            android:id="@+id/itemStoreFrontImageViewDone"
+            android:layout_width="@dimen/item_store_front_button_size"
+            android:layout_height="@dimen/item_store_front_button_size"
+            android:visibility="gone"
+            android:src="@drawable/bkg_done"
+            app:layout_constraintBottom_toBottomOf="@+id/itemStoreFrontButtonBuy"
+            app:layout_constraintEnd_toEndOf="@+id/itemStoreFrontButtonBuy"
+            app:layout_constraintStart_toStartOf="@+id/itemStoreFrontButtonBuy"
+            app:layout_constraintTop_toTopOf="@+id/itemStoreFrontButtonBuy"
+            tools:visibility="visible"
+            />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/itemStoreFrontButtonBuy"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="@dimen/item_store_front_button_size"
@@ -83,21 +109,23 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:paddingTop="6dp"
             android:layout_marginBottom="16dp"
+            android:drawableStart="@drawable/ic_add_to_cart"
             android:insetTop="0dp"
             android:insetBottom="0dp"
-            android:drawableStart="@drawable/ic_add_to_cart"
+            android:paddingTop="6dp"
             app:cornerRadius="@dimen/item_store_front_button_corner_radius"
             app:icon="@drawable/ic_add_to_cart"
             app:iconTint="@color/colorAccent"
-            app:rippleColor="@color/colorRipple"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/itemStoreFrontTextviewQuantity"
             app:layout_constraintVertical_bias="1.0"
-    />
+            app:rippleColor="@color/colorRipple"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

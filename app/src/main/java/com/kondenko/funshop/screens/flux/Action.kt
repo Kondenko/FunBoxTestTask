@@ -6,6 +6,7 @@ sealed class Action {
 
     sealed class Buyer : Action() {
         data class Buy(val good: Good) : Buyer()
+        object CleanUpLastBoughtItem : Buyer()
     }
 
     sealed class Admin : Action() {
