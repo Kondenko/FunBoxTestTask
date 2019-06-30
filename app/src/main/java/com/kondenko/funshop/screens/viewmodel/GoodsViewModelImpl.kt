@@ -9,11 +9,11 @@ import com.kondenko.funshop.domain.GetGoods
 import com.kondenko.funshop.entities.Good
 import com.kondenko.funshop.screens.flux.Action
 import com.kondenko.funshop.screens.flux.State
+import com.kondenko.funshop.screens.flux.State.*
+import com.kondenko.funshop.utils.replace
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.rxkotlin.toObservable
-import timber.log.Timber
 
 class GoodsViewModelImpl(
     val getGoods: GetGoods,
@@ -35,10 +35,7 @@ class GoodsViewModelImpl(
         disposables += when (action) {
             is Action.Buyer.GetGoods -> {
                 getGoods(null)
-                    .flatMap { it.toObservable() }
-                    .filter { it.quantity > 0 }
-                    .doOnNext { Timber.d("Item received: $it") }
-                    .toList()
+                    .map { it.filter { it.quantity > 0 } }
                     .subscribeBy(
                         onSuccess = {
                             setState(it)
