@@ -6,4 +6,7 @@
 
     <dimen name="item_backend_padding">16dp</dimen>
 
+    <dimen name="item_store_front_button_size">56dp</dimen>
+    <dimen name="item_store_front_button_corner_radius">90dp</dimen>
+
 </resources>

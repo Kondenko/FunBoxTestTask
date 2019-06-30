@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#c7c7c7</color>
     <color name="colorAccent">#AFC831</color>
     <color name="colorAccentDark">#7c9700</color>
+    <color name="colorRipple">#29AFC831</color>
 
     <color name="colorBottomNav">#8A000000</color>
 

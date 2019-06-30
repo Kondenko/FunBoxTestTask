@@ -2,21 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-            android:id="@+id/navigation_store"
-            android:icon="@drawable/ic_nav_store_front"
-            android:title="@string/nav_store_front"/>
-
-
-    <!-- Saves space for the FAB -->
-    <item
-            android:id="@+id/empty"
-            android:title=""
-            android:enabled="false"
-    />
+        android:id="@+id/navigation_store"
+        android:icon="@drawable/ic_nav_store_front"
+        android:title="@string/nav_store_front"
+        />
 
     <item
-            android:id="@+id/navigation_backend"
-            android:icon="@drawable/ic_nav_backend"
-            android:title="@string/nav_backend"/>
+        android:id="@+id/navigation_backend"
+        android:icon="@drawable/ic_nav_backend"
+        android:title="@string/nav_backend"
+        />
 
 </menu>
