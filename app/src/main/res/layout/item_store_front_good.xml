@@ -63,30 +63,41 @@
         />
 
 
+    <ProgressBar
+            style="?android:attr/progressBarStyle"
+            android:layout_width="@dimen/item_store_front_progressbar_size"
+            android:layout_height="@dimen/item_store_front_progressbar_size"
+            android:id="@+id/itemStoreFrontProgressBar"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@+id/itemStoreFrontButtonBuy"
+            app:layout_constraintBottom_toBottomOf="@+id/itemStoreFrontButtonBuy"
+            app:layout_constraintTop_toTopOf="@+id/itemStoreFrontButtonBuy"
+            app:layout_constraintEnd_toEndOf="@+id/itemStoreFrontButtonBuy"
+    />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/itemStoreFrontButtonBuy"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="@dimen/item_store_front_button_size"
-        android:layout_height="@dimen/item_store_front_button_size"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:paddingTop="6dp"
-        android:layout_marginBottom="16dp"
-        android:insetTop="0dp"
-        android:insetBottom="0dp"
-        android:drawableStart="@drawable/ic_add_to_cart"
-        app:cornerRadius="@dimen/item_store_front_button_corner_radius"
-        app:icon="@drawable/ic_add_to_cart"
-        app:iconTint="@color/colorAccent"
-        app:rippleColor="@color/colorRipple"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/itemStoreFrontTextviewQuantity"
-        app:layout_constraintVertical_bias="1.0"
-        />
+            android:id="@+id/itemStoreFrontButtonBuy"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="@dimen/item_store_front_button_size"
+            android:layout_height="@dimen/item_store_front_button_size"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:paddingTop="6dp"
+            android:layout_marginBottom="16dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:drawableStart="@drawable/ic_add_to_cart"
+            app:cornerRadius="@dimen/item_store_front_button_corner_radius"
+            app:icon="@drawable/ic_add_to_cart"
+            app:iconTint="@color/colorAccent"
+            app:rippleColor="@color/colorRipple"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/itemStoreFrontTextviewQuantity"
+            app:layout_constraintVertical_bias="1.0"
+    />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import com.kondenko.funshop.R
 import com.kondenko.funshop.entities.Good
 import com.kondenko.funshop.screens.FragmentGoods
@@ -19,7 +20,7 @@ import timber.log.Timber
 
 class FragmentStore : FragmentGoods() {
 
-    private val vm: BuyerViewModel by viewModel<GoodsViewModelImpl>()
+    private val viewModel: BuyerViewModel by viewModel<GoodsViewModelImpl>()
 
     override lateinit var adapterGoods: AdapterGoods
 
@@ -33,17 +34,31 @@ class FragmentStore : FragmentGoods() {
                 itemStoreFrontTextviewName.text = item.name
                 itemStoreFrontTextviewPrice.text = item.displayPrice
                 itemStoreFrontTextviewQuantity.text = item.displayQuantity
+                itemStoreFrontButtonBuy.setOnClickListener {
+                    viewModel(Action.Buyer.Buy(item))
+                }
             }
         }
-        view.store_front_viewpager.adapter = adapterGoods
-        vm(Action.Buyer.GetGoods)
+        view.store_front_viewpager.run {
+            adapter = adapterGoods
+        }
+        viewModel(Action.Buyer.GetGoods)
     }
 
-    override fun viewModel(): GoodsViewModelImpl = vm as GoodsViewModelImpl
+    override fun viewModel(): GoodsViewModelImpl = viewModel as GoodsViewModelImpl
 
     override fun onStateChanged(state: State<List<Good>>) = when (state) {
-        is State.Success.ItemsFetched<List<Good>> -> state.render()
+        is State.Success.ItemsFetched -> state.render()
+        is State.Success.ItemBought, is State.Error -> playPurchaseAnimation(false)
+        is State.Loading.Purchase -> playPurchaseAnimation(true)
         else -> Unit
     }.also { Timber.d("Store state updated: $state") }
+
+    private fun playPurchaseAnimation(play: Boolean) {
+        view?.apply {
+            itemStoreFrontProgressBar?.isVisible = play
+            itemStoreFrontButtonBuy?.isEnabled = !play
+        }
+    }
 
 }

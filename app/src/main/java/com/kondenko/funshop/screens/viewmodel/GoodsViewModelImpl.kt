@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.kondenko.funshop.domain.AddGood
+import com.kondenko.funshop.domain.BuyGood
 import com.kondenko.funshop.domain.GetGoods
 import com.kondenko.funshop.entities.Good
 import com.kondenko.funshop.screens.flux.Action
@@ -12,10 +13,12 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.rxkotlin.toObservable
+import timber.log.Timber
 
 class GoodsViewModelImpl(
     val getGoods: GetGoods,
-    val addGood: AddGood
+    val addGood: AddGood,
+    val buyGood: BuyGood
 ) : ViewModel(), BuyerViewModel, AdminViewModel {
 
     private val state = MutableLiveData<State<List<Good>>>()
@@ -23,52 +26,65 @@ class GoodsViewModelImpl(
     private val disposables = CompositeDisposable()
 
     init {
-        state.value = State.Loading
+        state.value = State.Loading.Goods
     }
 
     override fun state(): LiveData<State<List<Good>>> = state
 
     override fun invoke(action: Action.Buyer) {
-        when (action) {
-            Action.Buyer.GetGoods -> {
-                disposables += getGoods()
+        disposables += when (action) {
+            is Action.Buyer.GetGoods -> {
+                getGoods(null)
                     .flatMap { it.toObservable() }
                     .filter { it.quantity > 0 }
+                    .doOnNext { Timber.d("Item received: $it") }
                     .toList()
                     .subscribeBy(
-                        onSuccess = { toState(it) },
-                        onError = { toState(it) }
+                        onSuccess = {
+                            setState(it)
+                        },
+                        onError = { setState(it) }
                     )
             }
-            else -> return
+            is Action.Buyer.Buy -> {
+                buyGood(action.good)
+                    .doOnSubscribe { setState(State.Loading.Purchase(action.good)) }
+                    .subscribeBy(
+                        onComplete = { setState(State.Success.ItemBought(listOf(action.good))) },
+                        onError = { setState(it) }
+                    )
+            }
         }
     }
 
     override fun invoke(action: Action.Admin) {
         when (action) {
             is Action.Admin.GetGoods -> {
-                disposables += getGoods().subscribeBy(
-                    onNext = { toState(it) },
-                    onError = { toState(it) }
+                disposables += getGoods(null).subscribeBy(
+                    onNext = { setState(it) },
+                    onError = { setState(it) }
                 )
             }
             is Action.Admin.Create -> {
                 disposables += addGood(action.good).subscribeBy(
                     onComplete = { state.value = State.Success.ItemAdded(listOf(action.good)) },
-                    onError = ::toState
+                    onError = ::setState
                 )
             }
             else -> return
         }
     }
 
-    private fun toState(data: List<Good>) {
-        state.value = State.Success.ItemsFetched(data)
+    private fun setState(state: State<List<Good>>) {
+        this.state.value = state
     }
 
-    private fun toState(throwable: Throwable) {
-        state.value = State.Error(throwable)
-    }
+    private fun setState(goods: List<Good>) = setState(
+        if (goods.isEmpty()) State.Empty
+        else State.Success.ItemsFetched(goods)
+    )
+
+    private fun setState(throwable: Throwable) = setState(State.Error(throwable))
 
 }
 
