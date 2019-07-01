@@ -6,6 +6,6 @@ import com.kondenko.funshop.screens.flux.State
 
 interface GoodsViewModel {
 
-    fun state(): LiveData<State<List<Good>>>
+    fun state(): LiveData<State<Good>>
 
 }

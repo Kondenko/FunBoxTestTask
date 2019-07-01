@@ -7,6 +7,7 @@ import com.kondenko.funshop.R
 import com.kondenko.funshop.screens.backend.FragmentBackend
 import com.kondenko.funshop.screens.store.FragmentStore
 import com.kondenko.funshop.screens.viewmodel.GoodsViewModelImpl
+import com.kondenko.funshop.utils.transaction
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -54,11 +55,14 @@ class ActivityMain : AppCompatActivity() {
     private fun setFragment(fragment: Fragment, tag: String) {
         if (selectedTag == null || selectedTag != tag) {
             selectedTag = tag
-            with(supportFragmentManager.beginTransaction()) {
+            supportFragmentManager.transaction {
                 replace(R.id.framelayout_container, fragment, tag)
-                commit()
             }
         }
+    }
+
+    override fun onBackPressed() {
+        fragmentBackend.onBackPressed()
     }
 
 }

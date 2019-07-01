@@ -55,6 +55,9 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     implementation "io.reactivex.rxjava2:rxkotlin:2.4.0-beta.1"
 
+    def rxbinding_version = "3.0.0-alpha2"
+    implementation "com.jakewharton.rxbinding3:rxbinding:$rxbinding_version"
+    implementation "com.jakewharton.rxbinding3:rxbinding-material:$rxbinding_version"
 
     def koin_version = "2.0.1"
     implementation "org.koin:koin-android:$koin_version"

@@ -10,8 +10,12 @@ import com.kondenko.funshop.entities.Good
 import com.kondenko.funshop.screens.flux.State
 import com.kondenko.funshop.screens.viewmodel.GoodsViewModelImpl
 import com.kondenko.funshop.utils.subscribe
+import io.reactivex.disposables.CompositeDisposable
+import org.koin.android.ext.android.inject
 
 abstract class FragmentGoods : Fragment() {
+
+    protected val disposables: CompositeDisposable by inject()
 
     protected lateinit var adapterGoods: AdapterGoods
 
@@ -30,9 +34,14 @@ abstract class FragmentGoods : Fragment() {
         viewModel().state().subscribe(viewLifecycleOwner, ::onStateChanged)
     }
 
+    override fun onDestroy() {
+        disposables.dispose()
+        super.onDestroy()
+    }
+
     protected abstract fun viewModel(): GoodsViewModelImpl
 
-    protected abstract fun onStateChanged(state: State<List<Good>>)
+    protected abstract fun onStateChanged(state: State<Good>)
 
     protected abstract fun bindItem(view: View, item: Good, payloads: List<Any>)
 

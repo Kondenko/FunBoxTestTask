@@ -6,4 +6,15 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="AppTheme.TextInput" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox" >
+        <item name="boxStrokeColor">?colorAccent</item>
+        <item name="hintTextColor">?colorAccent</item>
+    </style>
+
+    <style name="AppTheme.Button.OutlinedButton" parent="Widget.MaterialComponents.Button.OutlinedButton" >
+        <item name="rippleColor">@color/colorRipple</item>
+        <item name="iconTint">?colorAccent</item>
+        <item name="android:textColor">?colorAccent</item>
+    </style>
+
 </resources>

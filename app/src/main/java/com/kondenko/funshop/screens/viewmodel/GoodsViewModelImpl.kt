@@ -14,6 +14,7 @@ import com.kondenko.funshop.utils.replace
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
+import java.util.*
 
 class GoodsViewModelImpl(
         getGoods: GetGoods,
@@ -21,7 +22,9 @@ class GoodsViewModelImpl(
         val buyGood: BuyGood
 ) : ViewModel(), BuyerViewModel, AdminViewModel {
 
-    private val state = MutableLiveData<State<List<Good>>>()
+    private val state = MutableLiveData<State<Good>>()
+
+    private val stateHistory = Stack<State<Good>>()
 
     private val disposables = CompositeDisposable()
 
@@ -41,7 +44,7 @@ class GoodsViewModelImpl(
                 )
     }
 
-    override fun state(): LiveData<State<List<Good>>> = state
+    override fun state(): LiveData<State<Good>> = state
 
     override fun invoke(action: Action.Buyer) {
         val currentState = state.value
@@ -75,15 +78,27 @@ class GoodsViewModelImpl(
                         onError = { setErrorState(it, currentState) }
                 )
             }
+            is Action.Admin.ShowGoodEditScreen -> {
+                setState(Mutation(action.good))
+            }
+            is Action.Admin.HideGoodEditScreen -> {
+                stateHistory.pop()
+                setState(stateHistory.peek())
+            }
+            is Action.Admin.GoBack -> {
+                if (state.value is Mutation) invoke(Action.Admin.HideGoodEditScreen)
+                else setState(GoBackDefault)
+            }
             else -> return
         }
     }
 
-    private fun setState(state: State<List<Good>>) {
+    private fun setState(state: State<Good>) {
+        stateHistory.push(state)
         this.state.value = state
     }
 
-    private fun setErrorState(throwable: Throwable, currentState: State<List<Good>>?) = setState(
+    private fun setErrorState(throwable: Throwable, currentState: State<Good>?) = setState(
             if (currentState is Success) Error(throwable, currentState.data)
             else Error(throwable)
     )

@@ -38,7 +38,7 @@ class FragmentStore : FragmentGoods() {
 
     override fun viewModel(): GoodsViewModelImpl = viewModel as GoodsViewModelImpl
 
-    override fun onStateChanged(state: State<List<Good>>) {
+    override fun onStateChanged(state: State<Good>) {
         view?.storeFrontProgressBar?.isVisible = state is State.Loading.Goods
         when (state) {
             is State.Success.ItemBought -> adapterGoods.items = state.data

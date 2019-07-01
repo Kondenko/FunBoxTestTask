@@ -2,6 +2,8 @@ package com.kondenko.funshop.utils
 
 import android.view.View
 import android.view.ViewPropertyAnimator
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -13,9 +15,9 @@ import java.io.InputStreamReader
 import java.util.regex.Matcher
 
 fun <T> LiveData<T>.subscribe(lifecycleOwner: LifecycleOwner, action: (T) -> Unit) =
-    observe(lifecycleOwner, Observer(action))
+        observe(lifecycleOwner, Observer(action))
 
-fun <T> Iterable<T>.replace(replacementItem: T, predicate: (T) -> Boolean) = map { if (predicate(it)) replacementItem else it  }
+fun <T> Iterable<T>.replace(replacementItem: T, predicate: (T) -> Boolean) = map { if (predicate(it)) replacementItem else it }
 
 fun View.animate(animation: ViewPropertyAnimator.() -> ViewPropertyAnimator) {
     animate().animation().start()
@@ -52,3 +54,6 @@ fun InputStream.parseLines(publisher: Subscriber<in String>) {
         }
     }
 }
+
+fun FragmentManager.transaction(actions: FragmentTransaction.() -> FragmentTransaction) =
+        beginTransaction().actions().commit()

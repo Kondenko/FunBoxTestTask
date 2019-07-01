@@ -4,20 +4,16 @@
     android:layout_height="match_parent"
     >
 
-    <androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/backendRecyclerViewGoods"
+    <fragment
+        class="com.kondenko.funshop.screens.backend.FragmentItemEditor"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        />
+        android:tag="@string/backend_tag_fragment_editor" />
 
-    <ProgressBar
-        android:id="@+id/backendProgressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        />
+    <include
+        android:id="@+id/backendLayoutList"
+        layout="@layout/layout_backend_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </FrameLayout>

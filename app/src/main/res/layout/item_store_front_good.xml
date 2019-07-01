@@ -90,7 +90,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/itemStoreFrontButtonBuy"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            style="@style/AppTheme.Button.OutlinedButton"
             android:layout_width="@dimen/item_store_front_button_size"
             android:layout_height="@dimen/item_store_front_button_size"
             android:layout_marginStart="8dp"
@@ -103,13 +103,11 @@
             android:paddingTop="6dp"
             app:cornerRadius="@dimen/item_store_front_button_corner_radius"
             app:icon="@drawable/ic_add_to_cart"
-            app:iconTint="@color/colorAccent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/itemStoreFrontTextviewQuantity"
             app:layout_constraintVertical_bias="1.0"
-            app:rippleColor="@color/colorRipple"
             />
 
         <androidx.appcompat.widget.AppCompatImageView

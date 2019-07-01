@@ -5,6 +5,17 @@
     <string name="nav_backend">Backend</string>
 
     <string name="item_good_price">%s₽</string>
+    <string name="item_good_price_postfix">₽</string>
     <string name="item_good_quantity">%d шт.</string>
+    <string name="item_good_quantity_postfix">шт.</string>
+
+    <string name="backend_hint_name">Название</string>
+    <string name="backend_hint_price">Количество</string>
+    <string name="backend_hint_quantity">Цена</string>
+
+    <string name="backend_action_cancel">Отменить</string>
+    <string name="backend_action_save">Сохранить</string>
+
+    <string name="backend_tag_fragment_editor" translatable="false">backendFragmentItemEditor</string>
 
 </resources>
