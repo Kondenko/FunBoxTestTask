@@ -32,9 +32,13 @@ class GoodsViewModelImpl(
         state.value = Loading.Goods
         disposables += getGoods(null)
                 .map {
+                    val currentState = state.value
                     when {
                         it.isEmpty() -> Empty
-                        state.value is Loading.Purchase -> Success.ItemBought(it)
+                        currentState is Loading.Purchase -> Success.ItemBought(it)
+                        currentState is Mutation -> {
+                            currentState.copy(data = it)
+                        }
                         else -> Success.ItemsFetched(it)
                     }
                 }
@@ -45,6 +49,30 @@ class GoodsViewModelImpl(
     }
 
     override fun state(): LiveData<State<Good>> = state
+
+    override fun invoke(action: Action.Admin) {
+        val currentState = state.value
+        when (action) {
+            is Action.Admin.Create -> {
+                disposables += addGood(action.good).subscribeBy(
+                        onComplete = { state.value = Success.ItemAdded(listOf(action.good)) },
+                        onError = { setErrorState(it, currentState) }
+                )
+            }
+            is Action.Admin.ShowGoodEditScreen -> {
+                setState(Mutation(action.good, currentState?.data))
+            }
+            is Action.Admin.HideGoodEditScreen -> {
+                stateHistory.pop()
+                setState(stateHistory.peek())
+            }
+            is Action.Admin.GoBack -> {
+                if (state.value is Mutation) invoke(Action.Admin.HideGoodEditScreen)
+                else setState(GoBackDefault)
+            }
+            else -> return
+        }
+    }
 
     override fun invoke(action: Action.Buyer) {
         val currentState = state.value
@@ -66,30 +94,6 @@ class GoodsViewModelImpl(
             is Action.Buyer.CleanUpLastBoughtItem -> {
                 setState(Success.ItemsFetched(currentState!!.data!!))
             }
-        }
-    }
-
-    override fun invoke(action: Action.Admin) {
-        val currentState = state.value
-        when (action) {
-            is Action.Admin.Create -> {
-                disposables += addGood(action.good).subscribeBy(
-                        onComplete = { state.value = Success.ItemAdded(listOf(action.good)) },
-                        onError = { setErrorState(it, currentState) }
-                )
-            }
-            is Action.Admin.ShowGoodEditScreen -> {
-                setState(Mutation(action.good))
-            }
-            is Action.Admin.HideGoodEditScreen -> {
-                stateHistory.pop()
-                setState(stateHistory.peek())
-            }
-            is Action.Admin.GoBack -> {
-                if (state.value is Mutation) invoke(Action.Admin.HideGoodEditScreen)
-                else setState(GoBackDefault)
-            }
-            else -> return
         }
     }
 

@@ -57,7 +57,6 @@ class FragmentBackend : FragmentGoods() {
     override fun onStateChanged(state: State<Good>) {
         Timber.d("Backend state updated: $state")
         view?.backendProgressBar?.isVisible = state is State.Loading.Goods
-        if (state !is State.Mutation) hideGoodEditor()
         when (state) {
             is State.Success.ItemsFetched<Good> -> updateData(state.data)
             is State.Mutation<Good> -> showGoodEditor(state.item)
