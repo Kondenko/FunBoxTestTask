@@ -8,6 +8,7 @@
 
     <style name="AppTheme.TextInput" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox" >
         <item name="boxStrokeColor">?colorAccent</item>
+        <item name="android:colorControlActivated">@color/colorAccent</item>
         <item name="hintTextColor">?colorAccent</item>
     </style>
 
