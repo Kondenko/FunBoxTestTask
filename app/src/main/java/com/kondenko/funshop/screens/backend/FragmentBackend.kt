@@ -58,8 +58,14 @@ class FragmentBackend : FragmentGoods() {
         Timber.d("Backend state updated: $state")
         view?.backendProgressBar?.isVisible = state is State.Loading.Goods
         when (state) {
-            is State.Success.ItemsFetched<Good> -> updateData(state.data)
-            is State.Mutation<Good> -> showGoodEditor(state.item)
+            is State.Success.ItemsFetched<Good> -> {
+                hideGoodEditor()
+                updateData(state.data)
+            }
+            is State.Mutation<Good> -> {
+                state.data?.let(::updateData)
+                showGoodEditor(state.item)
+            }
             is State.GoBackDefault -> activity?.finish()
             else -> return
         }
