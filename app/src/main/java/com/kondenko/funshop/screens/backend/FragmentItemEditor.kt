@@ -8,7 +8,8 @@ import androidx.fragment.app.Fragment
 import com.jakewharton.rxbinding3.view.clicks
 import com.kondenko.funshop.R
 import com.kondenko.funshop.entities.Good
-import com.kondenko.funshop.utils.findFirst
+import com.kondenko.funshop.utils.find
+import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
@@ -25,17 +26,27 @@ class FragmentItemEditor : Fragment() {
     private var good: Good? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedState: Bundle?): View =
-            inflater.inflate(R.layout.fragment_backend_good, container, false)
+        inflater.inflate(R.layout.fragment_backend_good, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         good = savedInstanceState?.getParcelable(attrGood)
+        payloadViewName.apply {
+            disposables += discardClicks().subscribeBy(onError = Timber::e)
+            disposables += updateClicks<String>().subscribeBy(onError = Timber::e) {
+                it.value?.let { onItemUpdated(new = good?.copy(name = it)) }
+            }
+        }
+        payloadViewPrice.apply {
+            disposables += discardClicks().subscribeBy(onError = Timber::e)
+            disposables += updateClicks<Double>().subscribeBy(onError = Timber::e) {
+                it.value?.let { onItemUpdated(new = good?.copy(price = it)) }
+            }
+        }
         payloadViewQuantity.apply {
             disposables += discardClicks().subscribeBy(onError = Timber::e)
-            disposables += updateClicks().subscribeBy(onError = Timber::e) {
-                (it.value as? Long)?.let {
-                    onItemUpdated(null, good?.copy(quantity = it))
-                }
+            disposables += updateClicks<Long>().subscribeBy(onError = Timber::e) {
+                it.value?.let { onItemUpdated(new = good?.copy(quantity = it)) }
             }
         }
     }
@@ -49,19 +60,17 @@ class FragmentItemEditor : Fragment() {
         onItemUpdated(this.good, good)
     }
 
-    fun saveClicks() = backendButtonSave.clicks().map { parseGood() }
+    fun saveClicks(): Observable<Good> = backendButtonSave.clicks().map { parseGood() }
 
     fun cancelClicks() = backendButtonCancel.clicks()
 
-    private fun onItemUpdated(old: Good?, new: Good?) {
-        val newIsPresent = new != null
-        if (old != null && newIsPresent) {
+    private fun onItemUpdated(old: Good? = null, new: Good?) {
+        if (old != null && new != null) {
             val payloads = old.getPayloads(new)
-            payloadViewQuantity.apply {
-                val quantityPayload = payloads!!.findFirst<Good.Payload.Quantity>()
-                payload = quantityPayload?.new
-            }
-        } else if (newIsPresent) {
+            payloadViewName.payload = payloads.find<Good.Payload.Name>()?.new
+            payloadViewPrice.payload = payloads.find<Good.Payload.Price>()?.new
+            payloadViewQuantity.payload = payloads.find<Good.Payload.Quantity>()?.new
+        } else {
             new.render()
             good = new
             arguments?.putParcelable(attrGood, new)
@@ -75,9 +84,9 @@ class FragmentItemEditor : Fragment() {
     }
 
     private fun parseGood() = Good(
-            name = backendEditTextName.text.toString(),
-            price = backendEditTextPrice.text.toString().toDouble(),
-            quantity = backendEditTextQuantity.text.toString().toLong()
+        name = backendEditTextName.text.toString(),
+        price = backendEditTextPrice.text.toString().toDouble(),
+        quantity = backendEditTextQuantity.text.toString().toLong()
     )
 
 }

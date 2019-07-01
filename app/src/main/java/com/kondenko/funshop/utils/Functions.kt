@@ -61,7 +61,7 @@ fun InputStream.parseLines(publisher: Subscriber<in String>) {
 fun FragmentManager.transaction(actions: FragmentTransaction.() -> FragmentTransaction) =
         beginTransaction().actions().commit()
 
-inline fun <reified T> Iterable<Any>.findFirst(): T? = find { it is T } as T
+inline fun <reified T> Iterable<Any>.find(): T? = find { it is T } as? T
 
 fun View.useAttributes(attrs: AttributeSet?, @StyleableRes styleable: IntArray, defStyleAttr: Int = 0, defStyleRes: Int = 0, actions: TypedArray.() -> Unit) {
     attrs?.let {

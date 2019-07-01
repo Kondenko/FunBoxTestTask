@@ -8,6 +8,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.jakewharton.rxbinding3.view.clicks
 import com.kondenko.funshop.R
+import io.reactivex.Observable
 import kotlinx.android.synthetic.main.layout_payload.view.*
 
 class PayloadView @JvmOverloads constructor(
@@ -17,7 +18,7 @@ class PayloadView @JvmOverloads constructor(
         defStyleRes: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
 
-    private val payloadLayout = View.inflate(context, R.layout.layout_payload, this)
+    val payloadLayout: View = View.inflate(context, R.layout.layout_payload, this)
 
     private var payloadMessage: String? = null
 
@@ -39,11 +40,11 @@ class PayloadView @JvmOverloads constructor(
         }
     }
 
-    fun updateClicks() = payloadLayout.payloadButtonUpdate.clicks()
+    inline fun <reified T> updateClicks(): Observable<KOptional<out T>> = payloadLayout.payloadButtonUpdate.clicks()
             .doOnNext { if (isSelfManaged) this.isGone = true }
-            .map { KOptional(payload) }
+            .map { KOptional.ofNullable<T>(payload as? T) }
 
-    fun discardClicks() = payloadLayout.payloadButtonDiscard.clicks()
+    fun discardClicks(): Observable<Unit> = payloadLayout.payloadButtonDiscard.clicks()
             .doOnNext { if (isSelfManaged) this.isGone = true }
 
 }
