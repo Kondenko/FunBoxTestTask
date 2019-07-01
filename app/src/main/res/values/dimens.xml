@@ -8,7 +8,7 @@
 
     <dimen name="item_store_front_button_size">56dp</dimen>
     <dimen name="item_store_front_button_corner_radius">90dp</dimen>
-    <dimen name="item_store_front_progressbar_size">64dp</dimen>
+    <dimen name="item_store_front_progressbar_size">65dp</dimen>
     <dimen name="item_store_front_margin_horizontal">32dp</dimen>
     <dimen name="item_store_front_margin_vertical">112dp</dimen>
 
