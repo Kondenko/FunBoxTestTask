@@ -1,7 +1,10 @@
 package com.kondenko.funshop.utils
 
+import android.content.res.TypedArray
+import android.util.AttributeSet
 import android.view.View
 import android.view.ViewPropertyAnimator
+import androidx.annotation.StyleableRes
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.LifecycleOwner
@@ -57,3 +60,14 @@ fun InputStream.parseLines(publisher: Subscriber<in String>) {
 
 fun FragmentManager.transaction(actions: FragmentTransaction.() -> FragmentTransaction) =
         beginTransaction().actions().commit()
+
+inline fun <reified T> Iterable<Any>.findFirst(): T? = find { it is T } as T
+
+fun View.useAttributes(attrs: AttributeSet?, @StyleableRes styleable: IntArray, defStyleAttr: Int = 0, defStyleRes: Int = 0, actions: TypedArray.() -> Unit) {
+    attrs?.let {
+        with(context.obtainStyledAttributes(it, styleable, defStyleAttr, defStyleRes)) {
+            actions()
+            recycle()
+        }
+    }
+}

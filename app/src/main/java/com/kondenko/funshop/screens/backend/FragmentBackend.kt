@@ -81,7 +81,7 @@ class FragmentBackend : FragmentGoods() {
     private fun showGoodEditor(good: Good?) {
         childFragmentManager.transaction {
             show(backendFragmentItemEditor.apply {
-                this.good = good
+                setGood(good)
             })
         }
         view?.backendLayoutList?.isGone = true
@@ -89,7 +89,9 @@ class FragmentBackend : FragmentGoods() {
 
     private fun hideGoodEditor() {
         childFragmentManager.transaction {
-            hide(backendFragmentItemEditor)
+            hide(backendFragmentItemEditor.apply {
+                setGood(null)
+            })
         }
         view?.backendLayoutList?.isVisible = true
     }

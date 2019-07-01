@@ -9,9 +9,15 @@
     <string name="item_good_quantity">%d шт.</string>
     <string name="item_good_quantity_postfix">шт.</string>
 
+    <string name="backend_message_item_updated_name">Название изменилось: %s</string>
+    <string name="backend_message_item_updated_price">Цена изменилась: %s</string>
+    <string name="backend_message_item_updated_quantity">Количество изменилось: %s</string>
+    <string name="backend_action_discard">Оставить</string>
+    <string name="backend_action_update_value">Обновить</string>
+
     <string name="backend_hint_name">Название</string>
-    <string name="backend_hint_price">Количество</string>
-    <string name="backend_hint_quantity">Цена</string>
+    <string name="backend_hint_price">Цена</string>
+    <string name="backend_hint_quantity">Количество</string>
 
     <string name="backend_action_cancel">Отменить</string>
     <string name="backend_action_save">Сохранить</string>

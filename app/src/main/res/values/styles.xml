@@ -17,4 +17,10 @@
         <item name="android:textColor">?colorAccent</item>
     </style>
 
+    <style name="AppTheme.Button.TextButton" parent="Widget.MaterialComponents.Button.TextButton" >
+        <item name="rippleColor">@color/colorRipple</item>
+        <item name="iconTint">?colorAccent</item>
+        <item name="android:textColor">?colorAccent</item>
+    </style>
+
 </resources>

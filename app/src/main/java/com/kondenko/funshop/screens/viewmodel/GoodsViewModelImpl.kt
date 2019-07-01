@@ -37,7 +37,8 @@ class GoodsViewModelImpl(
                         it.isEmpty() -> Empty
                         currentState is Loading.Purchase -> Success.ItemBought(it)
                         currentState is Mutation -> {
-                            currentState.copy(data = it)
+                            val itemBeingEdited = it.find { it.id == currentState.item?.id }
+                            currentState.copy(item = itemBeingEdited, data = it)
                         }
                         else -> Success.ItemsFetched(it)
                     }
