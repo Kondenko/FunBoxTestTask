@@ -15,6 +15,7 @@ import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
+import java.util.*
 import java.util.regex.Matcher
 
 fun <T> LiveData<T>.subscribe(lifecycleOwner: LifecycleOwner, action: (T) -> Unit) =
@@ -71,3 +72,5 @@ fun View.useAttributes(attrs: AttributeSet?, @StyleableRes styleable: IntArray, 
         }
     }
 }
+
+fun <T> Stack<T>.peekOrNull(): T? = if (isNotEmpty()) peek() else null

@@ -16,6 +16,7 @@ import com.kondenko.funshop.screens.viewmodel.AdminViewModel
 import com.kondenko.funshop.screens.viewmodel.GoodsViewModelImpl
 import com.kondenko.funshop.utils.transaction
 import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.fragment_backend.view.*
 import kotlinx.android.synthetic.main.item_backend_good.view.*
 import kotlinx.android.synthetic.main.layout_backend_list.view.*
@@ -30,24 +31,23 @@ class FragmentBackend : FragmentGoods() {
 
     override val itemLayout: Int = R.layout.item_backend_good
 
-    private lateinit var backendFragmentItemEditor: FragmentItemEditor
+    private val fragmentItemEditor = FragmentItemEditor()
+
+    private val backStackEditor = "editorStack"
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val itemEditorTag = view.context.getString(R.string.backend_tag_fragment_editor)
-        backendFragmentItemEditor = childFragmentManager.findFragmentByTag(itemEditorTag) as FragmentItemEditor
-        hideGoodEditor()
         with(view.backendRecyclerViewGoods) {
             addItemDecoration(DividerItemDecoration(view.context, DividerItemDecoration.VERTICAL))
             this.adapter = adapterGoods
         }
-        disposables += view.backendFabNewGood.clicks().subscribe {
+        disposables += view.backendFabNewGood.clicks().subscribeBy(Timber::e) {
             viewModel(Action.Admin.ShowGoodEditScreen(null))
         }
-        disposables += backendFragmentItemEditor.cancelClicks().subscribe {
+        disposables += fragmentItemEditor.cancelClicks().subscribeBy(Timber::e) {
             viewModel(Action.Admin.HideGoodEditScreen)
         }
-        disposables += backendFragmentItemEditor.saveClicks().subscribe {
+        disposables += fragmentItemEditor.saveClicks().subscribeBy(Timber::e) {
             Toast.makeText(view.context, "Saving (not really)", Toast.LENGTH_SHORT).show()
         }
     }
@@ -62,16 +62,17 @@ class FragmentBackend : FragmentGoods() {
                 hideGoodEditor()
                 updateData(state.data)
             }
+            is State.Loading.Goods -> {
+                hideGoodEditor()
+            }
             is State.Mutation<Good> -> {
                 state.data?.let(::updateData)
                 showGoodEditor(state.item)
             }
-            is State.GoBackDefault -> activity?.finish()
-            else -> return
         }
     }
 
-    fun onBackPressed() {
+    fun goBack() {
         viewModel(Action.Admin.GoBack)
     }
 
@@ -86,18 +87,17 @@ class FragmentBackend : FragmentGoods() {
 
     private fun showGoodEditor(good: Good?) {
         childFragmentManager.transaction {
-            show(backendFragmentItemEditor.apply {
+            replace(R.id.backendFrameLayoutContainer, fragmentItemEditor.apply {
                 setGood(good)
             })
+            addToBackStack(backStackEditor)
         }
         view?.backendLayoutList?.isGone = true
     }
 
     private fun hideGoodEditor() {
         childFragmentManager.transaction {
-            hide(backendFragmentItemEditor.apply {
-                setGood(null)
-            })
+            remove(fragmentItemEditor)
         }
         view?.backendLayoutList?.isVisible = true
     }

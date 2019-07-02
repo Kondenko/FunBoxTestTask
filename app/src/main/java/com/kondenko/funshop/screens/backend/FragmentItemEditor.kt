@@ -13,6 +13,7 @@ import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.fragment_backend_good.*
 import org.koin.android.ext.android.inject
 import timber.log.Timber
@@ -25,30 +26,44 @@ class FragmentItemEditor : Fragment() {
 
     private var good: Good? = null
 
+    private val saveClicks = PublishSubject.create<Good>()
+    private val cancelClicks = PublishSubject.create<Unit>()
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedState: Bundle?): View =
         inflater.inflate(R.layout.fragment_backend_good, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         good = savedInstanceState?.getParcelable(attrGood)
+        good.render()
         payloadViewName.apply {
             disposables += discardClicks().subscribeBy(onError = Timber::e)
             disposables += updateClicks<String>().subscribeBy(onError = Timber::e) {
-                it.value?.let { onItemUpdated(new = good?.copy(name = it)) }
+                it.value?.let { onItemUpdated(new = good?.copy(name = it), renderNow = true) }
             }
         }
         payloadViewPrice.apply {
             disposables += discardClicks().subscribeBy(onError = Timber::e)
             disposables += updateClicks<Double>().subscribeBy(onError = Timber::e) {
-                it.value?.let { onItemUpdated(new = good?.copy(price = it)) }
+                it.value?.let { onItemUpdated(new = good?.copy(price = it), renderNow = true) }
             }
         }
         payloadViewQuantity.apply {
             disposables += discardClicks().subscribeBy(onError = Timber::e)
             disposables += updateClicks<Long>().subscribeBy(onError = Timber::e) {
-                it.value?.let { onItemUpdated(new = good?.copy(quantity = it)) }
+                it.value?.let { onItemUpdated(new = good?.copy(quantity = it), renderNow = true) }
             }
         }
+        backendButtonSave.clicks()
+            .map { parseGood() }
+            .subscribe(saveClicks)
+        backendButtonCancel.clicks()
+            .subscribe(cancelClicks)
+    }
+
+    override fun onDestroyView() {
+        disposables.clear()
+        super.onDestroyView()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -57,21 +72,21 @@ class FragmentItemEditor : Fragment() {
     }
 
     fun setGood(good: Good?) {
-        onItemUpdated(this.good, good)
+        onItemUpdated(this.good, good, view != null)
     }
 
-    fun saveClicks(): Observable<Good> = backendButtonSave.clicks().map { parseGood() }
+    fun saveClicks(): Observable<Good> = saveClicks
 
-    fun cancelClicks() = backendButtonCancel.clicks()
+    fun cancelClicks(): Observable<Unit> = cancelClicks
 
-    private fun onItemUpdated(old: Good? = null, new: Good?) {
+    private fun onItemUpdated(old: Good? = null, new: Good?, renderNow: Boolean) {
         if (old != null && new != null) {
             val payloads = old.getPayloads(new)
             payloadViewName.payload = payloads.find<Good.Payload.Name>()?.new
             payloadViewPrice.payload = payloads.find<Good.Payload.Price>()?.new
             payloadViewQuantity.payload = payloads.find<Good.Payload.Quantity>()?.new
         } else {
-            new.render()
+            if (renderNow) new.render()
             good = new
             arguments?.putParcelable(attrGood, new)
         }

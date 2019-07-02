@@ -62,7 +62,11 @@ class ActivityMain : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        fragmentBackend.onBackPressed()
+        val shouldPopBackStack = fragmentBackend.run {
+            host != null && childFragmentManager.backStackEntryCount > 0
+        }
+        if (shouldPopBackStack) fragmentBackend.goBack()
+        else super.onBackPressed()
     }
 
 }

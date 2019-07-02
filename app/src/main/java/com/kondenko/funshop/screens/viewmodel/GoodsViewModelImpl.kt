@@ -10,6 +10,7 @@ import com.kondenko.funshop.entities.Good
 import com.kondenko.funshop.screens.flux.Action
 import com.kondenko.funshop.screens.flux.State
 import com.kondenko.funshop.screens.flux.State.*
+import com.kondenko.funshop.utils.peekOrNull
 import com.kondenko.funshop.utils.replace
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
@@ -23,6 +24,8 @@ class GoodsViewModelImpl(
 ) : ViewModel(), BuyerViewModel, AdminViewModel {
 
     private val state = MutableLiveData<State<Good>>()
+
+    private val initialState = Loading.Goods
 
     private val distinctStateHistory = Stack<State<Good>>()
 
@@ -65,7 +68,7 @@ class GoodsViewModelImpl(
             }
             is Action.Admin.HideGoodEditScreen -> {
                 distinctStateHistory.pop()
-                setState(distinctStateHistory.peek())
+                setState(distinctStateHistory.peekOrNull() ?: initialState)
             }
             is Action.Admin.GoBack -> {
                 if (state.value is Mutation) invoke(Action.Admin.HideGoodEditScreen)

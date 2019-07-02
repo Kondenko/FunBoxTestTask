@@ -22,6 +22,4 @@
     <string name="backend_action_cancel">Отменить</string>
     <string name="backend_action_save">Сохранить</string>
 
-    <string name="backend_tag_fragment_editor" translatable="false">backendFragmentItemEditor</string>
-
 </resources>
