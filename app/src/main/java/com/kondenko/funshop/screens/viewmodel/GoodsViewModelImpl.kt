@@ -32,7 +32,7 @@ class GoodsViewModelImpl(
     private val disposables = CompositeDisposable()
 
     init {
-        state.value = Loading.Goods
+        state.value = initialState
         disposables += getGoods(null)
                 .map {
                     val currentState = state.value

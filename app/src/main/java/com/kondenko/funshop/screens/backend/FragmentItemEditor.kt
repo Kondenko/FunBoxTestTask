@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import com.jakewharton.rxbinding3.view.clicks
 import com.kondenko.funshop.R
@@ -15,6 +16,7 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.fragment_backend_good.*
+import kotlinx.android.synthetic.main.fragment_backend_good.view.*
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
@@ -34,24 +36,24 @@ class FragmentItemEditor : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        good = savedInstanceState?.getParcelable(attrGood)
+        good = arguments?.getParcelable(attrGood)
         good.render()
         payloadViewName.apply {
             disposables += discardClicks().subscribeBy(onError = Timber::e)
             disposables += updateClicks<String>().subscribeBy(onError = Timber::e) {
-                it.value?.let { onItemUpdated(new = good?.copy(name = it), renderNow = true) }
+                it.value?.let { onItemUpdated(new = good?.copy(name = it)) }
             }
         }
         payloadViewPrice.apply {
             disposables += discardClicks().subscribeBy(onError = Timber::e)
             disposables += updateClicks<Double>().subscribeBy(onError = Timber::e) {
-                it.value?.let { onItemUpdated(new = good?.copy(price = it), renderNow = true) }
+                it.value?.let { onItemUpdated(new = good?.copy(price = it)) }
             }
         }
         payloadViewQuantity.apply {
             disposables += discardClicks().subscribeBy(onError = Timber::e)
             disposables += updateClicks<Long>().subscribeBy(onError = Timber::e) {
-                it.value?.let { onItemUpdated(new = good?.copy(quantity = it), renderNow = true) }
+                it.value?.let { onItemUpdated(new = good?.copy(quantity = it)) }
             }
         }
         backendButtonSave.clicks()
@@ -66,36 +68,33 @@ class FragmentItemEditor : Fragment() {
         super.onDestroyView()
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putParcelable(attrGood, good)
-        super.onSaveInstanceState(outState)
-    }
-
     fun setGood(good: Good?) {
-        onItemUpdated(this.good, good, view != null)
+        onItemUpdated(this.good, good)
     }
 
     fun saveClicks(): Observable<Good> = saveClicks
 
     fun cancelClicks(): Observable<Unit> = cancelClicks
 
-    private fun onItemUpdated(old: Good? = null, new: Good?, renderNow: Boolean) {
-        if (old != null && new != null) {
+    private fun onItemUpdated(old: Good? = null, new: Good?) {
+        if (old != null && old.id == new?.id) {
             val payloads = old.getPayloads(new)
-            payloadViewName.payload = payloads.find<Good.Payload.Name>()?.new
-            payloadViewPrice.payload = payloads.find<Good.Payload.Price>()?.new
-            payloadViewQuantity.payload = payloads.find<Good.Payload.Quantity>()?.new
+            payloadViewName?.payload = payloads.find<Good.Payload.Name>()?.new
+            payloadViewPrice?.payload = payloads.find<Good.Payload.Price>()?.new
+            payloadViewQuantity?.payload = payloads.find<Good.Payload.Quantity>()?.new
         } else {
-            if (renderNow) new.render()
             good = new
-            arguments?.putParcelable(attrGood, new)
+            new.render()
+            arguments = bundleOf(attrGood to new)
         }
     }
 
     private fun Good?.render() {
-        backendEditTextName.setText(this?.name)
-        backendEditTextPrice.setText(this?.price?.toString())
-        backendEditTextQuantity.setText(this?.quantity?.toString())
+        view?.let {
+            it.backendEditTextName.setText(this?.name)
+            it.backendEditTextPrice.setText(this?.price?.toString())
+            it.backendEditTextQuantity.setText(this?.quantity?.toString())
+        }
     }
 
     private fun parseGood() = Good(

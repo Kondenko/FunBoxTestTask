@@ -33,7 +33,10 @@ class FragmentBackend : FragmentGoods() {
 
     private val fragmentItemEditor = FragmentItemEditor()
 
-    private val backStackEditor = "editorStack"
+    private val editorTag = "editor"
+
+    var isShowingEditor = true
+        private set
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -48,7 +51,7 @@ class FragmentBackend : FragmentGoods() {
             viewModel(Action.Admin.HideGoodEditScreen)
         }
         disposables += fragmentItemEditor.saveClicks().subscribeBy(Timber::e) {
-            Toast.makeText(view.context, "Saving (not really)", Toast.LENGTH_SHORT).show()
+            Toast.makeText(view.context, "Saving ${it.name}", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -86,18 +89,22 @@ class FragmentBackend : FragmentGoods() {
     }
 
     private fun showGoodEditor(good: Good?) {
+        isShowingEditor = true
+        fragmentItemEditor.setGood(good)
         childFragmentManager.transaction {
-            replace(R.id.backendFrameLayoutContainer, fragmentItemEditor.apply {
-                setGood(good)
-            })
-            addToBackStack(backStackEditor)
+            if (childFragmentManager.findFragmentByTag(editorTag) == null) {
+                add(R.id.backendFrameLayoutContainer, fragmentItemEditor, editorTag)
+            }
+            show(fragmentItemEditor)
         }
+        fragmentItemEditor.setGood(good)
         view?.backendLayoutList?.isGone = true
     }
 
     private fun hideGoodEditor() {
+        isShowingEditor = false
         childFragmentManager.transaction {
-            remove(fragmentItemEditor)
+            hide(fragmentItemEditor)
         }
         view?.backendLayoutList?.isVisible = true
     }

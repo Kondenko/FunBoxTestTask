@@ -63,7 +63,7 @@ class ActivityMain : AppCompatActivity() {
 
     override fun onBackPressed() {
         val shouldPopBackStack = fragmentBackend.run {
-            host != null && childFragmentManager.backStackEntryCount > 0
+            host != null && isShowingEditor
         }
         if (shouldPopBackStack) fragmentBackend.goBack()
         else super.onBackPressed()
