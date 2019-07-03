@@ -11,7 +11,7 @@ interface GoodsDao : GoodsProvider {
     @Query("SELECT * FROM good")
     override fun getGoods(): Observable<List<Good>>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(good: Good): Completable
 
     @Update(onConflict = OnConflictStrategy.REPLACE)

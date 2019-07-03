@@ -11,6 +11,7 @@ import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.widget.textChanges
 import com.kondenko.funshop.R
 import com.kondenko.funshop.entities.Good
+import com.kondenko.funshop.utils.KOptional
 import com.kondenko.funshop.utils.Schedulers
 import com.kondenko.funshop.utils.find
 import io.reactivex.Observable
@@ -55,18 +56,15 @@ class FragmentItemEditor : Fragment() {
         disposables.clear()
     }
 
+    fun setGood(good: Good?) {
+        onItemUpdated(this.good, good)
+    }
+
+    fun saveClicks(): Observable<Good> = saveClicks
+
+    fun cancelClicks(): Observable<Unit> = cancelClicks
+
     private fun setupUi() {
-
-        val nameLengthValidator = textInputLayoutName.validate()
-        val priceLengthValidator = textInputLayoutPrice.validate()
-        val quantityLengthValidator = textInputLayoutQuantity.validate()
-
-        disposables += Observables.combineLatest(nameLengthValidator, priceLengthValidator, quantityLengthValidator)
-        { isNameValid, isPriceValid, isQuantityValid -> isNameValid && isPriceValid && isQuantityValid }
-            .debounce(300, TimeUnit.MILLISECONDS, schedulers.ui)
-            .startWith(false)
-            .subscribe(backendButtonSave::setEnabled)
-
         payloadViewName.apply {
             disposables += discardClicks().subscribeBy(onError = Timber::e)
             disposables += updateClicks<String>().subscribeBy(onError = Timber::e) {
@@ -87,10 +85,21 @@ class FragmentItemEditor : Fragment() {
         }
 
         backendButtonSave.clicks()
-            .map { parseGood() }
+            .map { KOptional(parseGood()) }
+            .filter { it.isNotEmpty() }
+            .map { it.value }
             .subscribe(saveClicks)
         backendButtonCancel.clicks()
             .subscribe(cancelClicks)
+
+        val nameLengthValidator = textInputLayoutName.validate()
+        val priceLengthValidator = textInputLayoutPrice.validate()
+        val quantityLengthValidator = textInputLayoutQuantity.validate()
+
+        disposables += Observables.combineLatest(nameLengthValidator, priceLengthValidator, quantityLengthValidator)
+        { isNameValid, isPriceValid, isQuantityValid -> isNameValid && isPriceValid && isQuantityValid }
+            .debounce(300, TimeUnit.MILLISECONDS, schedulers.ui)
+            .subscribe(backendButtonSave::setEnabled)
     }
 
     private fun TextInputLayout.validate() = (
@@ -131,11 +140,20 @@ class FragmentItemEditor : Fragment() {
         }
     }
 
-    private fun parseGood() = Good(
-        id = good?.id,
-        name = backendEditTextName.text.toString(),
-        price = backendEditTextPrice.text.toString().toDouble(),
-        quantity = backendEditTextQuantity.text.toString().toLong()
-    )
+    private fun parseGood(): Good? {
+        val name = backendEditTextName.text.toString()
+        val price = backendEditTextPrice.text.toString().toDoubleOrNull()
+        val quantity = backendEditTextQuantity.text.toString().toLongOrNull()
+        return if (price != null && quantity != null) {
+            Good(
+                id = good?.id,
+                name = name,
+                price = price,
+                quantity = quantity
+            )
+        } else {
+            null
+        }
+    }
 
 }

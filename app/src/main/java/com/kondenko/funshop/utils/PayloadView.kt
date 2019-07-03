@@ -42,7 +42,7 @@ class PayloadView @JvmOverloads constructor(
 
     inline fun <reified T> updateClicks(): Observable<KOptional<out T>> = payloadLayout.payloadButtonUpdate.clicks()
             .doOnNext { if (isSelfManaged) this.isGone = true }
-            .map { KOptional.ofNullable<T>(payload as? T) }
+            .map { KOptional(payload as? T) }
 
     fun discardClicks(): Observable<Unit> = payloadLayout.payloadButtonDiscard.clicks()
             .doOnNext { if (isSelfManaged) this.isGone = true }
