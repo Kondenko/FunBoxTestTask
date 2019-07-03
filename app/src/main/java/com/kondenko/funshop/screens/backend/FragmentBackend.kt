@@ -94,7 +94,6 @@ class FragmentBackend : FragmentGoods() {
 
     private fun showGoodEditor(good: Good?) {
         isShowingEditor = true
-        fragmentItemEditor.setGood(good)
         childFragmentManager.transaction {
             if (childFragmentManager.findFragmentByTag(editorTag) == null) {
                 add(R.id.backendFrameLayoutContainer, fragmentItemEditor, editorTag)

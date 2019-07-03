@@ -16,7 +16,6 @@ import com.kondenko.funshop.utils.Schedulers
 import com.kondenko.funshop.utils.find
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.Observables
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.subjects.PublishSubject
@@ -24,7 +23,6 @@ import kotlinx.android.synthetic.main.fragment_backend_good.*
 import kotlinx.android.synthetic.main.fragment_backend_good.view.*
 import org.koin.android.ext.android.inject
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
 
 class FragmentItemEditor : Fragment() {
 
@@ -37,6 +35,11 @@ class FragmentItemEditor : Fragment() {
     private val saveClicks = PublishSubject.create<Good>()
     private val cancelClicks = PublishSubject.create<Unit>()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        userVisibleHint = false
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedState: Bundle?): View =
         inflater.inflate(R.layout.fragment_backend_good, container, false)
 
@@ -44,16 +47,7 @@ class FragmentItemEditor : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         good = arguments?.getParcelable(attrGood)
         good.render()
-    }
-
-    override fun onResume() {
-        super.onResume()
         setupUi()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        disposables.clear()
     }
 
     fun setGood(good: Good?) {
@@ -95,29 +89,24 @@ class FragmentItemEditor : Fragment() {
         val nameLengthValidator = textInputLayoutName.validate()
         val priceLengthValidator = textInputLayoutPrice.validate()
         val quantityLengthValidator = textInputLayoutQuantity.validate()
+        val validators = listOf(nameLengthValidator, priceLengthValidator, quantityLengthValidator)
 
-        disposables += Observables.combineLatest(nameLengthValidator, priceLengthValidator, quantityLengthValidator)
-        { isNameValid, isPriceValid, isQuantityValid -> isNameValid && isPriceValid && isQuantityValid }
-            .debounce(300, TimeUnit.MILLISECONDS, schedulers.ui)
-            .subscribe(backendButtonSave::setEnabled)
+        disposables += Observable.combineLatest(validators) { it.all { it == true } }
+            .skip(validators.size.toLong())
+            .startWith(false)
+            .subscribe(backendButtonSave::setEnabled, Timber::e)
     }
 
-    private fun TextInputLayout.validate() = (
-            this.editText?.textChanges()?.skipInitialValue()
-                ?: Observable.error(NullPointerException("TextInputLayout is null")))
-        .map { it.isNotBlank() }
-        .doOnNext { isValid ->
-            this.error = getString(R.string.backend_error_field_empty)
-            this.isErrorEnabled = !isValid
-        }
-
-    fun setGood(good: Good?) {
-        onItemUpdated(this.good, good)
-    }
-
-    fun saveClicks(): Observable<Good> = saveClicks
-
-    fun cancelClicks(): Observable<Unit> = cancelClicks
+    private fun TextInputLayout.validate(condition: (CharSequence) -> Boolean = { it.isNotBlank() }) =
+        this.editText?.let { et ->
+            et.textChanges()
+                .skipInitialValue()
+                .map { condition(it) }
+                .doOnNext { isValid ->
+                    error = if (!isValid) getString(R.string.backend_error_field_empty) else null
+                    isErrorEnabled = !isValid
+                }
+        } ?: Observable.error(NullPointerException("TextInputLayout is null"))
 
     private fun onItemUpdated(old: Good? = null, new: Good?) {
         if (old != null && old.id == new?.id) {
