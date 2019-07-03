@@ -11,6 +11,7 @@ import com.kondenko.funshop.entities.Good
 import com.kondenko.funshop.screens.FragmentGoods
 import com.kondenko.funshop.screens.flux.Action
 import com.kondenko.funshop.screens.flux.State
+import com.kondenko.funshop.screens.flux.State.*
 import com.kondenko.funshop.screens.viewmodel.AdminViewModel
 import com.kondenko.funshop.screens.viewmodel.GoodsViewModelImpl
 import com.kondenko.funshop.utils.showError
@@ -59,22 +60,22 @@ class FragmentBackend : FragmentGoods() {
 
     override fun onStateChanged(state: State<Good>) {
         Timber.d("Backend state updated: $state")
-        view?.backendProgressBar?.isVisible = state is State.Loading.Goods
+        view?.backendProgressBar?.isVisible = state is Loading.Goods
         when (state) {
-            is State.Success.ItemsFetched<Good> -> {
+            is Success.ItemsFetched<Good> -> {
                 hideGoodEditor()
                 updateData(state.data)
             }
-            is State.Loading.Goods -> {
-                hideGoodEditor()
-            }
-            is State.Mutation -> {
+            is Mutation -> {
                 state.data?.let(::updateData)
                 showGoodEditor(state.item)
             }
-            is State.Error -> {
+            is Error -> {
                 state.data?.let(::updateData)
                 context?.showError(state.throwable)
+            }
+            is Loading.Goods, is MutationFinished -> {
+                hideGoodEditor()
             }
         }
     }

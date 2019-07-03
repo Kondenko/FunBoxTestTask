@@ -4,7 +4,6 @@ sealed class State<out T>(open val data: List<T>?) {
 
     sealed class Success<T>(override val data: List<T>) : State<T>(data) {
         data class ItemsFetched<T>(override val data: List<T>) : Success<T>(data)
-        data class ItemAdded<T>(override val data: List<T>) : Success<T>(data)
         data class ItemBought<T>(override val data: List<T>) : Success<T>(data)
     }
 
@@ -19,6 +18,8 @@ sealed class State<out T>(open val data: List<T>?) {
      * Indicates the data on the screen is being edited
      */
     data class Mutation<out T>(val item: T?, override val data: List<T>?) : State<T>(data)
+
+    data class MutationFinished<T>(override val data: List<T>?) : State<T>(data)
 
     object Empty : State<Nothing>(null)
 

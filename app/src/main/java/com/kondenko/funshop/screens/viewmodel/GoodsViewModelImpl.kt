@@ -10,12 +10,10 @@ import com.kondenko.funshop.entities.Good
 import com.kondenko.funshop.screens.flux.Action
 import com.kondenko.funshop.screens.flux.State
 import com.kondenko.funshop.screens.flux.State.*
-import com.kondenko.funshop.utils.peekOrNull
 import com.kondenko.funshop.utils.replace
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
-import java.util.*
 
 class GoodsViewModelImpl(
     getGoods: GetGoods,
@@ -26,8 +24,6 @@ class GoodsViewModelImpl(
     private val state = MutableLiveData<State<Good>>()
 
     private val initialState = Loading.Goods
-
-    private val distinctStateHistory = Stack<State<Good>>()
 
     private val disposables = CompositeDisposable()
 
@@ -67,8 +63,7 @@ class GoodsViewModelImpl(
                 setState(Mutation(action.good, currentState?.data))
             }
             is Action.Admin.HideGoodEditScreen -> {
-                distinctStateHistory.pop()
-                setState(distinctStateHistory.peekOrNull() ?: initialState)
+                setState(MutationFinished(currentState?.data))
             }
             is Action.Admin.GoBack -> {
                 if (state.value is Mutation) invoke(Action.Admin.HideGoodEditScreen)
@@ -102,9 +97,6 @@ class GoodsViewModelImpl(
 
     private fun setState(state: State<Good>) {
         this.state.value = state
-        if (distinctStateHistory.isEmpty() || state::class != distinctStateHistory.peek()::class) {
-            distinctStateHistory.push(state)
-        }
     }
 
     private fun setErrorState(throwable: Throwable, currentState: State<Good>?) = setState(
