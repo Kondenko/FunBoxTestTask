@@ -14,8 +14,6 @@ sealed class Action {
         object HideGoodEditScreen : Admin()
         object GoBack : Admin()
         data class Create(val good: Good) : Admin()
-        data class Update(val good: Good) : Admin()
-        data class Delete(val good: Good) : Admin()
     }
 
 }

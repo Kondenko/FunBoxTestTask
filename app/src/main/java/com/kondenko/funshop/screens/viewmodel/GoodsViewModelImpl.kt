@@ -59,7 +59,7 @@ class GoodsViewModelImpl(
         when (action) {
             is Action.Admin.Create -> {
                 disposables += addGood(action.good).subscribeBy(
-                        onComplete = { state.value = Success.ItemAdded(listOf(action.good)) },
+                        onComplete = { invoke(Action.Admin.HideGoodEditScreen) },
                         onError = { setErrorState(it, currentState) }
                 )
             }
@@ -74,7 +74,6 @@ class GoodsViewModelImpl(
                 if (state.value is Mutation) invoke(Action.Admin.HideGoodEditScreen)
                 else setState(GoBackDefault)
             }
-            else -> return
         }
     }
 

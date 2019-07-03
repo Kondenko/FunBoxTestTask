@@ -1,16 +1,20 @@
 package com.kondenko.funshop.utils
 
+import android.content.Context
 import android.content.res.TypedArray
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewPropertyAnimator
+import android.widget.Toast
 import androidx.annotation.StyleableRes
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import com.kondenko.funshop.R
 import org.reactivestreams.Subscriber
+import timber.log.Timber
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream
@@ -59,7 +63,7 @@ fun InputStream.parseLines(publisher: Subscriber<in String>) {
     }
 }
 
-fun FragmentManager.transaction(actions: FragmentTransaction.() -> FragmentTransaction) =
+inline fun FragmentManager.transaction(actions: FragmentTransaction.() -> FragmentTransaction) =
         beginTransaction().actions().commit()
 
 inline fun <reified T> Iterable<Any>.find(): T? = find { it is T } as? T
@@ -74,3 +78,8 @@ fun View.useAttributes(attrs: AttributeSet?, @StyleableRes styleable: IntArray, 
 }
 
 fun <T> Stack<T>.peekOrNull(): T? = if (isNotEmpty()) peek() else null
+
+fun Context.showError(throwable: Throwable, messageRes: Int = R.string.all_error_generic) {
+    Timber.e(throwable)
+    Toast.makeText(this, messageRes, Toast.LENGTH_SHORT).show()
+}

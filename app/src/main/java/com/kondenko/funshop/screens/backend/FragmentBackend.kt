@@ -2,7 +2,6 @@ package com.kondenko.funshop.screens.backend
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -14,6 +13,7 @@ import com.kondenko.funshop.screens.flux.Action
 import com.kondenko.funshop.screens.flux.State
 import com.kondenko.funshop.screens.viewmodel.AdminViewModel
 import com.kondenko.funshop.screens.viewmodel.GoodsViewModelImpl
+import com.kondenko.funshop.utils.showError
 import com.kondenko.funshop.utils.transaction
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
@@ -51,7 +51,7 @@ class FragmentBackend : FragmentGoods() {
             viewModel(Action.Admin.HideGoodEditScreen)
         }
         disposables += fragmentItemEditor.saveClicks().subscribeBy(Timber::e) {
-            Toast.makeText(view.context, "Saving ${it.name}", Toast.LENGTH_SHORT).show()
+            viewModel(Action.Admin.Create(it))
         }
     }
 
@@ -68,9 +68,13 @@ class FragmentBackend : FragmentGoods() {
             is State.Loading.Goods -> {
                 hideGoodEditor()
             }
-            is State.Mutation<Good> -> {
+            is State.Mutation -> {
                 state.data?.let(::updateData)
                 showGoodEditor(state.item)
+            }
+            is State.Error -> {
+                state.data?.let(::updateData)
+                context?.showError(state.throwable)
             }
         }
     }

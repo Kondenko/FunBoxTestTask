@@ -18,6 +18,7 @@ import com.kondenko.funshop.screens.flux.State
 import com.kondenko.funshop.screens.viewmodel.BuyerViewModel
 import com.kondenko.funshop.screens.viewmodel.GoodsViewModelImpl
 import com.kondenko.funshop.utils.animate
+import com.kondenko.funshop.utils.showError
 import kotlinx.android.synthetic.main.fragment_store.view.*
 import kotlinx.android.synthetic.main.item_store_front_good.view.*
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -44,7 +45,10 @@ class FragmentStore : FragmentGoods() {
             is State.Success.ItemBought -> adapterGoods.items = state.data
             is State.Success -> updateData(state.data)
             is State.Loading.Purchase -> adapterGoods.items = state.data
-            is Error -> state.data?.let(::updateData)
+            is State.Error -> {
+                state.data?.let(::updateData)
+                context?.showError(state.throwable)
+            }
             else -> return
         }
     }
