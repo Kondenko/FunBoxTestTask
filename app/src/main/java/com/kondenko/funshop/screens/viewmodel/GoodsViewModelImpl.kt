@@ -3,7 +3,7 @@ package com.kondenko.funshop.screens.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.kondenko.funshop.domain.AddGood
+import com.kondenko.funshop.domain.AddOrUpdateGood
 import com.kondenko.funshop.domain.BuyGood
 import com.kondenko.funshop.domain.GetGoods
 import com.kondenko.funshop.entities.Good
@@ -18,9 +18,9 @@ import io.reactivex.rxkotlin.subscribeBy
 import java.util.*
 
 class GoodsViewModelImpl(
-        getGoods: GetGoods,
-        val addGood: AddGood,
-        val buyGood: BuyGood
+    getGoods: GetGoods,
+    val addOrUpdateGood: AddOrUpdateGood,
+    val buyGood: BuyGood
 ) : ViewModel(), BuyerViewModel, AdminViewModel {
 
     private val state = MutableLiveData<State<Good>>()
@@ -58,7 +58,7 @@ class GoodsViewModelImpl(
         val currentState = state.value
         when (action) {
             is Action.Admin.Create -> {
-                disposables += addGood(action.good).subscribeBy(
+                disposables += addOrUpdateGood(action.good).subscribeBy(
                         onComplete = { invoke(Action.Admin.HideGoodEditScreen) },
                         onError = { setErrorState(it, currentState) }
                 )

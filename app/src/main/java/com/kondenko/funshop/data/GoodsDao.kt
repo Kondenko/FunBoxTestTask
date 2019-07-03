@@ -1,9 +1,6 @@
 package com.kondenko.funshop.data
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.kondenko.funshop.entities.Good
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -14,7 +11,10 @@ interface GoodsDao : GoodsProvider {
     @Query("SELECT * FROM good")
     override fun getGoods(): Observable<List<Good>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert
     fun insert(good: Good): Completable
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    fun update(good: Good): Completable
 
 }

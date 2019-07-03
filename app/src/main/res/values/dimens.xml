@@ -14,7 +14,7 @@
 
     <dimen name="backend_good_padding_vertical">16dp</dimen>
     <dimen name="backend_good_padding_horizontal">16dp</dimen>
-    <dimen name="backend_edittext_margin_vertical">4dp</dimen>
+    <dimen name="backend_edittext_margin_vertical">8dp</dimen>
     <dimen name="backend_payloadview_height">48dp</dimen>
 
 </resources>

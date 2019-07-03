@@ -132,6 +132,7 @@ class FragmentItemEditor : Fragment() {
     }
 
     private fun parseGood() = Good(
+        id = good?.id,
         name = backendEditTextName.text.toString(),
         price = backendEditTextPrice.text.toString().toDouble(),
         quantity = backendEditTextQuantity.text.toString().toLong()

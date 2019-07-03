@@ -10,7 +10,7 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class Good(
         @PrimaryKey(autoGenerate = true)
-        val id: Int? = null,
+        val id: Int?,
         val name: String,
         val price: Double,
         val quantity: Long,
@@ -25,7 +25,7 @@ data class Good(
     }
 
     // For Room
-    constructor(id: Int? = null, name: String, price: Double, quantity: Long) :
+    constructor(id: Int?, name: String, price: Double, quantity: Long) :
             this(id, name, price, quantity, null)
 
     fun getPayloads(other: Good?): List<Payload> {
