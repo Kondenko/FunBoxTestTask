@@ -1,138 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:animateLayoutChanges="true"
-    android:orientation="vertical"
-    android:paddingStart="@dimen/backend_good_padding_horizontal"
-    android:paddingTop="@dimen/backend_good_padding_vertical"
-    android:paddingEnd="@dimen/backend_good_padding_horizontal"
-    android:paddingBottom="@dimen/backend_good_padding_vertical"
+    android:fillViewport="true"
     >
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayoutName"
-        android:theme="@style/AppTheme.TextInput"
-        style="@style/AppTheme.TextInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/backend_edittext_margin_vertical"
-        android:layout_marginBottom="@dimen/backend_edittext_margin_vertical"
-        android:hint="@string/backend_hint_name"
-        app:endIconMode="clear_text"
-        >
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/backendEditTextName"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.kondenko.funshop.utils.PayloadView
-        android:id="@+id/payloadViewName"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/backend_payloadview_height"
-        android:visibility="gone"
-        app:text="@string/backend_message_item_updated_name"
-        tools:visibility="gone"
-        />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayoutPrice"
-        android:theme="@style/AppTheme.TextInput"
-        style="@style/AppTheme.TextInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/backend_edittext_margin_vertical"
-        android:layout_marginBottom="@dimen/backend_edittext_margin_vertical"
-        android:hint="@string/backend_hint_price"
-        app:endIconMode="clear_text"
-        >
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/backendEditTextPrice"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:inputType="number"
-            />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.kondenko.funshop.utils.PayloadView
-        android:id="@+id/payloadViewPrice"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/backend_payloadview_height"
-        android:visibility="gone"
-        app:text="@string/backend_message_item_updated_price"
-        tools:visibility="gone"
-        />
-
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayoutQuantity"
-        android:theme="@style/AppTheme.TextInput"
-        style="@style/AppTheme.TextInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/backend_edittext_margin_vertical"
-        android:layout_marginBottom="@dimen/backend_edittext_margin_vertical"
-        android:hint="@string/backend_hint_quantity"
-        app:endIconMode="clear_text"
-        >
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/backendEditTextQuantity"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:inputType="number"
-            />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-
-    <com.kondenko.funshop.utils.PayloadView
-        android:id="@+id/payloadViewQuantity"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/backend_payloadview_height"
-        android:visibility="gone"
-        app:text="@string/backend_message_item_updated_quantity"
-        tools:visibility="gone"
-        />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/backend_good_padding_horizontal"
+        android:paddingTop="@dimen/backend_good_padding_vertical"
+        android:paddingEnd="@dimen/backend_good_padding_horizontal"
+        android:paddingBottom="@dimen/backend_good_padding_vertical"
         >
 
-        <Button
-            android:id="@+id/backendButtonCancel"
-            style="@style/AppTheme.Button.OutlinedButton"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayoutName"
+            style="@style/AppTheme.TextInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginStart="8dp"
-            android:layout_weight="1"
-            android:text="@string/backend_action_cancel"
+            android:layout_marginTop="@dimen/backend_edittext_margin_vertical"
+            android:layout_marginBottom="@dimen/backend_edittext_margin_vertical"
+            android:hint="@string/backend_hint_name"
+            android:theme="@style/AppTheme.TextInput"
+            app:endIconMode="clear_text"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/backendEditTextName"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.kondenko.funshop.utils.PayloadView
+            android:id="@+id/payloadViewName"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/backend_payloadview_height"
+            android:visibility="gone"
+            app:text="@string/backend_message_item_updated_name"
+            tools:visibility="gone"
             />
 
-        <Button
-            android:id="@+id/backendButtonSave"
-            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayoutPrice"
+            style="@style/AppTheme.TextInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_weight="1"
-            android:backgroundTint="?colorAccent"
-            android:text="@string/backend_action_save"
+            android:layout_marginTop="@dimen/backend_edittext_margin_vertical"
+            android:layout_marginBottom="@dimen/backend_edittext_margin_vertical"
+            android:hint="@string/backend_hint_price"
+            android:theme="@style/AppTheme.TextInput"
+            app:endIconMode="clear_text"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/backendEditTextPrice"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="number"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.kondenko.funshop.utils.PayloadView
+            android:id="@+id/payloadViewPrice"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/backend_payloadview_height"
+            android:visibility="gone"
+            app:text="@string/backend_message_item_updated_price"
+            tools:visibility="gone"
             />
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayoutQuantity"
+            style="@style/AppTheme.TextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/backend_edittext_margin_vertical"
+            android:layout_marginBottom="@dimen/backend_edittext_margin_vertical"
+            android:hint="@string/backend_hint_quantity"
+            android:theme="@style/AppTheme.TextInput"
+            app:endIconMode="clear_text"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/backendEditTextQuantity"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="number"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.kondenko.funshop.utils.PayloadView
+            android:id="@+id/payloadViewQuantity"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/backend_payloadview_height"
+            android:visibility="gone"
+            app:text="@string/backend_message_item_updated_quantity"
+            tools:visibility="gone"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            >
+
+            <Button
+                android:id="@+id/backendButtonCancel"
+                style="@style/AppTheme.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:text="@string/backend_action_cancel"
+                />
+
+            <Button
+                android:id="@+id/backendButtonSave"
+                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:backgroundTint="?colorAccent"
+                android:text="@string/backend_action_save"
+                />
+
+        </LinearLayout>
 
     </LinearLayout>
 
-</LinearLayout>
+</ScrollView>
