@@ -43,12 +43,16 @@ class FragmentItemEditor : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         good = arguments?.getParcelable(attrGood)
         good.render()
+    }
+
+    override fun onResume() {
+        super.onResume()
         setupUi()
     }
 
-    override fun onDestroyView() {
+    override fun onPause() {
+        super.onPause()
         disposables.clear()
-        super.onDestroyView()
     }
 
     private fun setupUi() {
@@ -92,7 +96,6 @@ class FragmentItemEditor : Fragment() {
     private fun TextInputLayout.validate() = (
             this.editText?.textChanges()?.skipInitialValue()
                 ?: Observable.error(NullPointerException("TextInputLayout is null")))
-        .skip(1)
         .map { it.isNotBlank() }
         .doOnNext { isValid ->
             this.error = getString(R.string.backend_error_field_empty)
