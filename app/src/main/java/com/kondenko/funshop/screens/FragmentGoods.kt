@@ -34,9 +34,9 @@ abstract class FragmentGoods : Fragment() {
         viewModel().state().subscribe(viewLifecycleOwner, ::onStateChanged)
     }
 
-    override fun onDestroyView() {
+    override fun onDestroy() {
         disposables.clear()
-        super.onDestroyView()
+        super.onDestroy()
     }
 
     protected abstract fun viewModel(): GoodsViewModelImpl
