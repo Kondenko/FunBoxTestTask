@@ -12,7 +12,6 @@ import com.jakewharton.rxbinding3.widget.textChanges
 import com.kondenko.funshop.R
 import com.kondenko.funshop.entities.Good
 import com.kondenko.funshop.utils.KOptional
-import com.kondenko.funshop.utils.Schedulers
 import com.kondenko.funshop.utils.find
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
@@ -31,7 +30,6 @@ class FragmentItemEditor : Fragment() {
     private var good: Good? = null
 
     private val disposables: CompositeDisposable by inject()
-    private val schedulers: Schedulers by inject()
     private val saveClicks = PublishSubject.create<Good>()
     private val cancelClicks = PublishSubject.create<Unit>()
 
@@ -52,6 +50,7 @@ class FragmentItemEditor : Fragment() {
 
     fun setGood(good: Good?) {
         onItemUpdated(this.good, good)
+        if (view != null) setupUi()
     }
 
     fun saveClicks(): Observable<Good> = saveClicks
@@ -59,6 +58,8 @@ class FragmentItemEditor : Fragment() {
     fun cancelClicks(): Observable<Unit> = cancelClicks
 
     private fun setupUi() {
+        disposables.clear()
+
         payloadViewName.apply {
             disposables += discardClicks().subscribeBy(onError = Timber::e)
             disposables += updateClicks<String>().subscribeBy(onError = Timber::e) {
@@ -89,19 +90,19 @@ class FragmentItemEditor : Fragment() {
         val nameLengthValidator = textInputLayoutName.validate()
         val priceLengthValidator = textInputLayoutPrice.validate()
         val quantityLengthValidator = textInputLayoutQuantity.validate()
-        val validators = listOf(nameLengthValidator, priceLengthValidator, quantityLengthValidator)
+        val validators = arrayOf(nameLengthValidator, priceLengthValidator, quantityLengthValidator)
 
         disposables += Observable.combineLatest(validators) { it.all { it == true } }
-            .skip(validators.size.toLong())
-            .startWith(false)
+            .startWith(good != null)
             .subscribe(backendButtonSave::setEnabled, Timber::e)
     }
 
     private fun TextInputLayout.validate(condition: (CharSequence) -> Boolean = { it.isNotBlank() }) =
         this.editText?.let { et ->
             et.textChanges()
-                .skipInitialValue()
+                .skip(if (good == null) 1 else 0)
                 .map { condition(it) }
+                .doOnDispose { error = null }
                 .doOnNext { isValid ->
                     error = if (!isValid) getString(R.string.backend_error_field_empty) else null
                     isErrorEnabled = !isValid
