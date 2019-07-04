@@ -1,17 +1,25 @@
 package com.kondenko.funshop.screens.main
 
 import android.os.Bundle
+import android.view.View
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.DecelerateInterpolator
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.kondenko.funshop.R
 import com.kondenko.funshop.screens.backend.FragmentBackend
 import com.kondenko.funshop.screens.store.FragmentStore
 import com.kondenko.funshop.screens.viewmodel.GoodsViewModelImpl
+import com.kondenko.funshop.utils.animate
+import com.kondenko.funshop.utils.scale
 import com.kondenko.funshop.utils.transaction
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class ActivityMain : AppCompatActivity() {
+
+    @Suppress("unused") // This ViewModel is shared with fragments
+    private val goodsViewModel by viewModel<GoodsViewModelImpl>()
 
     private val tagStore = "storeFront"
     private val fragmentStore = FragmentStore()
@@ -22,14 +30,13 @@ class ActivityMain : AppCompatActivity() {
     private val keySelectedTag = "selectedTag"
     private var selectedTag: String? = null
 
-    private val goodsViewModel by viewModel<GoodsViewModelImpl>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         selectedTag = savedInstanceState?.getString(keySelectedTag)
-        if (selectedTag == tagBackend) selectBackend()
-        else selectStore()
+        selectBackend()
+//        if (selectedTag == tagBackend) selectBackend()
+//        else selectStore()
         bottomnav.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.navigation_store -> selectStore()
@@ -53,12 +60,29 @@ class ActivityMain : AppCompatActivity() {
     }
 
     private fun setFragment(fragment: Fragment, tag: String) {
-        if (selectedTag == null || selectedTag != tag) {
-            selectedTag = tag
+        selectedTag = tag
+        val duration: Long = 75
+        framelayout_container.animateOut(duration) {
             supportFragmentManager.transaction {
                 replace(R.id.framelayout_container, fragment, tag)
             }
+            it.animateIn(duration)
         }
+    }
+
+    private fun View.animateOut(duration: Long, endAction: (View) -> Unit) = animate {
+        this.duration = duration
+        interpolator = AccelerateInterpolator()
+        scale(0.985f)
+        alpha(0f)
+        withEndAction { endAction(this@animateOut) }
+    }
+
+    private fun View.animateIn(duration: Long) = animate {
+        this.duration = duration
+        interpolator = DecelerateInterpolator(2f)
+        scale(1f)
+        alpha(1f)
     }
 
     override fun onBackPressed() {

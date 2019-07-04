@@ -1,5 +1,6 @@
 package com.kondenko.funshop.screens.backend
 
+import android.animation.AnimatorSet
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -33,10 +34,7 @@ class FragmentItemEditor : Fragment() {
     private val saveClicks = PublishSubject.create<Good>()
     private val cancelClicks = PublishSubject.create<Unit>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        userVisibleHint = false
-    }
+    private var revealAnimator: AnimatorSet? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedState: Bundle?): View =
         inflater.inflate(R.layout.fragment_backend_good, container, false)
@@ -56,6 +54,15 @@ class FragmentItemEditor : Fragment() {
     fun saveClicks(): Observable<Good> = saveClicks
 
     fun cancelClicks(): Observable<Unit> = cancelClicks
+
+    fun reveal(y: Float, height: Float) {
+        view?.backendGoodEditorRevealView?.reveal(height, y, backendGoodEditorLayoutContent)
+    }
+
+
+    fun hide(onFinished: () -> Unit) {
+        view?.backendGoodEditorRevealView?.hide(onFinished)
+    }
 
     private fun setupUi() {
         disposables.clear()

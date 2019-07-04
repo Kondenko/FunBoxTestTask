@@ -30,22 +30,22 @@ class GoodsViewModelImpl(
     init {
         state.value = initialState
         disposables += getGoods(null)
-                .map {
-                    val currentState = state.value
-                    when {
-                        it.isEmpty() -> Empty
-                        currentState is Loading.Purchase -> Success.ItemBought(it)
-                        currentState is Mutation -> {
-                            val itemBeingEdited = it.find { it.id == currentState.item?.id }
-                            currentState.copy(item = itemBeingEdited, data = it)
-                        }
-                        else -> Success.ItemsFetched(it)
+            .map {
+                val currentState = state.value
+                when {
+                    it.isEmpty() -> Empty
+                    currentState is Loading.Purchase -> Success.ItemBought(it)
+                    currentState is Mutation -> {
+                        val itemBeingEdited = it.find { it.id == currentState.item?.id }
+                        currentState.copy(item = itemBeingEdited, data = it)
                     }
+                    else -> Success.ItemsFetched(it)
                 }
-                .subscribeBy(
-                        onNext = { setState(it) },
-                        onError = { setErrorState(it, state.value) }
-                )
+            }
+            .subscribeBy(
+                onNext = { setState(it) },
+                onError = { setErrorState(it, state.value) }
+            )
     }
 
     override fun state(): LiveData<State<Good>> = state
@@ -55,19 +55,20 @@ class GoodsViewModelImpl(
         when (action) {
             is Action.Admin.Create -> {
                 disposables += addOrUpdateGood(action.good).subscribeBy(
-                        onComplete = { invoke(Action.Admin.HideGoodEditScreen) },
-                        onError = { setErrorState(it, currentState) }
+                    onComplete = { invoke(Action.Admin.HideGoodEditScreen) },
+                    onError = { setErrorState(it, currentState) }
                 )
             }
             is Action.Admin.ShowGoodEditScreen -> {
-                setState(Mutation(action.good, currentState?.data))
+                setState(Mutation(action.good, currentState?.data, action.x, action.height))
             }
             is Action.Admin.HideGoodEditScreen -> {
-                setState(MutationFinished(currentState?.data))
+                val (y, height) = (currentState as? Mutation)?.run { y to height } ?: 0f to 0f
+                setState(MutationFinished(currentState?.data, y, height))
             }
             is Action.Admin.GoBack -> {
                 if (state.value is Mutation) invoke(Action.Admin.HideGoodEditScreen)
-                else setState(GoBackDefault)
+                else setState(GoBack)
             }
         }
     }
@@ -77,17 +78,17 @@ class GoodsViewModelImpl(
         when (action) {
             is Action.Buyer.Buy -> {
                 disposables += buyGood(action.good)
-                        .doOnSubscribe {
-                            currentState?.data?.let { currentData ->
-                                val itemMetadata = action.good.metadata?.copy(isBeingProcessed = true)
-                                val processedItem = action.good.copy(metadata = itemMetadata)
-                                val loadingState = Loading.Purchase(currentData.replace(processedItem) {
-                                    it.id == processedItem.id
-                                })
-                                setState(loadingState)
-                            }
+                    .doOnSubscribe {
+                        currentState?.data?.let { currentData ->
+                            val itemMetadata = action.good.metadata?.copy(isBeingProcessed = true)
+                            val processedItem = action.good.copy(metadata = itemMetadata)
+                            val loadingState = Loading.Purchase(currentData.replace(processedItem) {
+                                it.id == processedItem.id
+                            })
+                            setState(loadingState)
                         }
-                        .subscribeBy(onError = { setErrorState(it, currentState) })
+                    }
+                    .subscribeBy(onError = { setErrorState(it, currentState) })
             }
             is Action.Buyer.CleanUpLastBoughtItem -> {
                 setState(Success.ItemsFetched(currentState!!.data!!))
@@ -100,8 +101,8 @@ class GoodsViewModelImpl(
     }
 
     private fun setErrorState(throwable: Throwable, currentState: State<Good>?) = setState(
-            if (currentState is Success) Error(throwable, currentState.data)
-            else Error(throwable)
+        if (currentState is Success) Error(throwable, currentState.data)
+        else Error(throwable)
     )
 
 }

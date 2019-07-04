@@ -10,5 +10,7 @@
 
     <color name="colorText">#8A000000</color>
 
+    <color name="colorBackgroundWhite">#ffff</color>
+    <color name="colorBackgroundMuted">#8A000000</color>
 
 </resources>

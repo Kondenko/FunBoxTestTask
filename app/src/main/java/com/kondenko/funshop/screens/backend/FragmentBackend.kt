@@ -2,7 +2,6 @@ package com.kondenko.funshop.screens.backend
 
 import android.os.Bundle
 import android.view.View
-import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.jakewharton.rxbinding3.view.clicks
@@ -14,11 +13,11 @@ import com.kondenko.funshop.screens.flux.State
 import com.kondenko.funshop.screens.flux.State.*
 import com.kondenko.funshop.screens.viewmodel.AdminViewModel
 import com.kondenko.funshop.screens.viewmodel.GoodsViewModelImpl
+import com.kondenko.funshop.utils.animate
 import com.kondenko.funshop.utils.showError
 import com.kondenko.funshop.utils.transaction
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
-import kotlinx.android.synthetic.main.fragment_backend.view.*
 import kotlinx.android.synthetic.main.item_backend_good.view.*
 import kotlinx.android.synthetic.main.layout_backend_list.view.*
 import org.koin.android.viewmodel.ext.android.sharedViewModel
@@ -36,6 +35,8 @@ class FragmentBackend : FragmentGoods() {
 
     private val editorTag = "editor"
 
+    private var editorFragmentAdded = false
+
     var isShowingEditor = true
         private set
 
@@ -46,7 +47,7 @@ class FragmentBackend : FragmentGoods() {
             this.adapter = adapterGoods
         }
         disposables += view.backendFabNewGood.clicks().subscribeBy(Timber::e) {
-            viewModel(Action.Admin.ShowGoodEditScreen(null))
+            viewModel(Action.Admin.ShowGoodEditScreen(null, 0f, 0f))
         }
         disposables += fragmentItemEditor.cancelClicks().subscribeBy(Timber::e) {
             viewModel(Action.Admin.HideGoodEditScreen)
@@ -59,24 +60,13 @@ class FragmentBackend : FragmentGoods() {
     override fun viewModel(): GoodsViewModelImpl = viewModel as GoodsViewModelImpl
 
     override fun onStateChanged(state: State<Good>) {
-        Timber.d("Backend state updated: $state")
+        state.data?.let(::updateData)
         view?.backendProgressBar?.isVisible = state is Loading.Goods
         when (state) {
-            is Success.ItemsFetched<Good> -> {
-                hideGoodEditor()
-                updateData(state.data)
-            }
-            is Mutation -> {
-                state.data?.let(::updateData)
-                showGoodEditor(state.item)
-            }
-            is Error -> {
-                state.data?.let(::updateData)
-                context?.showError(state.throwable)
-            }
-            is Loading.Goods, is MutationFinished -> {
-                hideGoodEditor()
-            }
+            is Success.ItemsFetched<Good> -> hideGoodEditor()
+            is Mutation -> showGoodEditor(state.item, state.y, state.height)
+            is Error -> context?.showError(state.throwable)
+            is Loading.Goods, is MutationFinished -> hideGoodEditor()
         }
     }
 
@@ -89,28 +79,37 @@ class FragmentBackend : FragmentGoods() {
         itemAdminTextviewPrice.text = item.metadata?.displayPrice
         itemAdminTextviewQuantity.text = item.metadata?.displayQuantity
         view.setOnClickListener {
-            viewModel(Action.Admin.ShowGoodEditScreen(item))
+            viewModel(Action.Admin.ShowGoodEditScreen(item, view.y, view.height.toFloat()))
         }
     }
 
-    private fun showGoodEditor(good: Good?) {
+    private fun showGoodEditor(good: Good?, y: Float, height: Float) {
         isShowingEditor = true
         childFragmentManager.transaction {
-            if (childFragmentManager.findFragmentByTag(editorTag) == null) {
+            if (!editorFragmentAdded) {
                 add(R.id.backendFrameLayoutContainer, fragmentItemEditor, editorTag)
+                editorFragmentAdded = true
             }
-            show(fragmentItemEditor)
+            show(fragmentItemEditor.also {
+                val darkenAnimDuration = 200L
+                view?.backendListCover?.animate {
+                    duration = darkenAnimDuration
+                    alpha(1f)
+                }
+                it.reveal(y, height)
+            })
         }
         fragmentItemEditor.setGood(good)
-        view?.backendLayoutList?.isGone = true
     }
 
     private fun hideGoodEditor() {
+        view?.apply { backendListCover.animate().alpha(0f).start() }
         isShowingEditor = false
-        childFragmentManager.transaction {
-            hide(fragmentItemEditor)
+        fragmentItemEditor.hide {
+            childFragmentManager.transaction {
+                hide(fragmentItemEditor)
+            }
         }
-        view?.backendLayoutList?.isVisible = true
     }
 
 }

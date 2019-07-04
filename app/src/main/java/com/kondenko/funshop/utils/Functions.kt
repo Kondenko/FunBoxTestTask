@@ -1,5 +1,6 @@
 package com.kondenko.funshop.utils
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.TypedArray
 import android.util.AttributeSet
@@ -19,13 +20,16 @@ import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
-import java.util.*
 import java.util.regex.Matcher
 
 fun <T> LiveData<T>.subscribe(lifecycleOwner: LifecycleOwner, action: (T) -> Unit) =
         observe(lifecycleOwner, Observer(action))
 
 fun <T> Iterable<T>.replace(replacementItem: T, predicate: (T) -> Boolean) = map { if (predicate(it)) replacementItem else it }
+
+fun ViewPropertyAnimator.scale(value: Float): ViewPropertyAnimator = scaleX(value).scaleY(value)
+
+inline fun <reified T> ValueAnimator.animatedValue() = animatedValue as T
 
 fun View.animate(animation: ViewPropertyAnimator.() -> ViewPropertyAnimator) {
     animate().animation().start()
@@ -76,8 +80,6 @@ fun View.useAttributes(attrs: AttributeSet?, @StyleableRes styleable: IntArray, 
         }
     }
 }
-
-fun <T> Stack<T>.peekOrNull(): T? = if (isNotEmpty()) peek() else null
 
 fun Context.showError(throwable: Throwable, messageRes: Int = R.string.all_error_generic) {
     Timber.e(throwable)
