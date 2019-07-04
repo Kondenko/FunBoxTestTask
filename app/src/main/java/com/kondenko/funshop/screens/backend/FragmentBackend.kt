@@ -1,7 +1,10 @@
 package com.kondenko.funshop.screens.backend
 
+import android.animation.TimeInterpolator
 import android.os.Bundle
 import android.view.View
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.DecelerateInterpolator
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.jakewharton.rxbinding3.view.clicks
@@ -82,32 +85,39 @@ class FragmentBackend : FragmentGoods() {
     }
 
     private fun showGoodEditor(good: Good?, y: Float, height: Float) {
-        isShowingEditor = true
-        childFragmentManager.transaction {
-            if (!editorFragmentAdded) {
-                add(R.id.backendFrameLayoutContainer, fragmentItemEditor)
-                editorFragmentAdded = true
+        if (!isShowingEditor) {
+            isShowingEditor = true
+            childFragmentManager.transaction {
+                if (!editorFragmentAdded) {
+                    add(R.id.backendFrameLayoutContainer, fragmentItemEditor)
+                    editorFragmentAdded = true
+                }
+                show(fragmentItemEditor)
+                setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
             }
-            show(fragmentItemEditor)
+            animateOverlay(true) {
+                fragmentItemEditor.reveal(y, height)
+            }
+            fragmentItemEditor.setGood(good)
         }
-        animateOverlay(true) {
-            fragmentItemEditor.reveal(y, height)
-        }
-        fragmentItemEditor.setGood(good)
     }
 
     private fun hideGoodEditor() {
-        isShowingEditor = false
-        fragmentItemEditor.hide {
-            animateOverlay(false) {}
-            childFragmentManager.transaction {
-                hide(fragmentItemEditor)
+        if (isShowingEditor) {
+            isShowingEditor = false
+            fragmentItemEditor.hide {
+                animateOverlay(false) {}
+                childFragmentManager.transaction {
+                    hide(fragmentItemEditor)
+                    setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                }
             }
         }
     }
 
     private fun animateOverlay(show: Boolean, onFinished: () -> Unit) = view?.backendListCover?.animate {
-        duration = if (show) 200L else 50L
+        duration = 200L
+        interpolator = if (show) DecelerateInterpolator() else AccelerateInterpolator() as TimeInterpolator
         alpha(if (show) 1f else 0f)
         withEndAction(onFinished)
     }

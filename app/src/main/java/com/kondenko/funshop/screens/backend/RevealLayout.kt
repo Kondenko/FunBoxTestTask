@@ -6,9 +6,11 @@ import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.ViewGroup
+import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.ScrollView
 import androidx.core.view.children
+import androidx.core.view.isVisible
 import com.kondenko.funshop.utils.animatedValue
 
 class RevealView @JvmOverloads constructor(
@@ -20,9 +22,12 @@ class RevealView @JvmOverloads constructor(
 
     private val topTravelDuration: Long = 200
 
-    private val clipHeightDurationFactor = topTravelDuration + 100
+    private val clipHeightDuration = topTravelDuration + 100
+
+    private val contentAlphaDuration: Long = topTravelDuration
 
     private val inInterpolator = DecelerateInterpolator()
+    private val outInterpolator = AccelerateInterpolator()
 
     private var clipHeight: Float = 0f
 
@@ -41,12 +46,16 @@ class RevealView @JvmOverloads constructor(
     }
 
     fun hide(onFinished: () -> Unit) {
-        shapeAnimators?.forEach(ValueAnimator::reverse)
+        shapeAnimators?.forEach {
+            it.interpolator = outInterpolator
+            it.reverse()
+        }
         // Trigger the onFinished callback after all animations have completed
         // without introducing concurrency
-        postDelayed(onFinished, clipHeightDurationFactor)
+        postDelayed(onFinished, shapeAnimators?.map { it.duration }?.min() ?: 0L)
         clipHeight = 0f
         top = originalTop
+        isVisible = true
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -56,7 +65,7 @@ class RevealView @JvmOverloads constructor(
 
     private fun createClipHeightAnimator(initialHeight: Float) =
         ValueAnimator.ofFloat(initialHeight, bottom.toFloat()).apply {
-            duration = clipHeightDurationFactor
+            duration = clipHeightDuration
             interpolator = inInterpolator
             addUpdateListener {
                 clipHeight = it.animatedValue()
@@ -75,7 +84,7 @@ class RevealView @JvmOverloads constructor(
 
     private fun createContentAlphaAnimator(contentView: ViewGroup) =
         ValueAnimator.ofFloat(0f, 1f).apply {
-            duration = topTravelDuration
+            duration = contentAlphaDuration
             interpolator = inInterpolator
             addUpdateListener { animator ->
                 contentView.children.forEach {
