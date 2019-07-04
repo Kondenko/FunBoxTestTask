@@ -31,23 +31,27 @@ class RevealView @JvmOverloads constructor(
     private val originalTop: Int by lazy { top }
 
     fun reveal(initialHeight: Float, initialTop: Float, content: ViewGroup) {
-        shapeAnimators = listOf(
-            createClipHeightAnimator(initialHeight),
-            createViewTopAnimator(initialTop),
-            createContentAlphaAnimator(content)
-        ).apply { forEach(Animator::start) }
+        post {
+            shapeAnimators = listOf(
+                createClipHeightAnimator(initialHeight),
+                createViewTopAnimator(initialTop),
+                createContentAlphaAnimator(content)
+            ).apply { forEach(Animator::start) }
+        }
     }
 
     fun hide(onFinished: () -> Unit) {
         shapeAnimators?.forEach(ValueAnimator::reverse)
-        postDelayed(onFinished, shapeAnimators?.map { it.duration }?.sum() ?: 0)
+        // Trigger the onFinished callback after all animations have completed
+        // without introducing concurrency
+        postDelayed(onFinished, clipHeightDurationFactor)
         clipHeight = 0f
         top = originalTop
     }
 
-    override fun dispatchDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas?) {
         canvas?.clipRect(0f, 0f, width.toFloat(), clipHeight)
-        super.dispatchDraw(canvas)
+        super.onDraw(canvas)
     }
 
     private fun createClipHeightAnimator(initialHeight: Float) =
@@ -79,6 +83,5 @@ class RevealView @JvmOverloads constructor(
                 }
             }
         }
-
 
 }

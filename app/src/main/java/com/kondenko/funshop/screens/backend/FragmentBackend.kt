@@ -33,8 +33,6 @@ class FragmentBackend : FragmentGoods() {
 
     private val fragmentItemEditor = FragmentItemEditor()
 
-    private val editorTag = "editor"
-
     private var editorFragmentAdded = false
 
     var isShowingEditor = true
@@ -87,29 +85,31 @@ class FragmentBackend : FragmentGoods() {
         isShowingEditor = true
         childFragmentManager.transaction {
             if (!editorFragmentAdded) {
-                add(R.id.backendFrameLayoutContainer, fragmentItemEditor, editorTag)
+                add(R.id.backendFrameLayoutContainer, fragmentItemEditor)
                 editorFragmentAdded = true
             }
-            show(fragmentItemEditor.also {
-                val darkenAnimDuration = 200L
-                view?.backendListCover?.animate {
-                    duration = darkenAnimDuration
-                    alpha(1f)
-                }
-                it.reveal(y, height)
-            })
+            show(fragmentItemEditor)
+        }
+        animateOverlay(true) {
+            fragmentItemEditor.reveal(y, height)
         }
         fragmentItemEditor.setGood(good)
     }
 
     private fun hideGoodEditor() {
-        view?.apply { backendListCover.animate().alpha(0f).start() }
         isShowingEditor = false
         fragmentItemEditor.hide {
+            animateOverlay(false) {}
             childFragmentManager.transaction {
                 hide(fragmentItemEditor)
             }
         }
+    }
+
+    private fun animateOverlay(show: Boolean, onFinished: () -> Unit) = view?.backendListCover?.animate {
+        duration = if (show) 200L else 50L
+        alpha(if (show) 1f else 0f)
+        withEndAction(onFinished)
     }
 
 }
