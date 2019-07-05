@@ -60,10 +60,10 @@ class GoodsViewModelImpl(
                 )
             }
             is Action.Admin.ShowGoodEditScreen -> {
-                setState(Mutation(action.good, currentState?.data, action.x, action.height))
+                setState(Mutation(action.good, currentState?.data, action.y, action.height))
             }
             is Action.Admin.HideGoodEditScreen -> {
-                val (y, height) = (currentState as? Mutation)?.run { y to height } ?: 0f to 0f
+                val (y, height) = (currentState as? Mutation)?.run { y to height } ?: 0 to 0f
                 setState(MutationFinished(currentState?.data, y, height))
             }
             is Action.Admin.GoBack -> {

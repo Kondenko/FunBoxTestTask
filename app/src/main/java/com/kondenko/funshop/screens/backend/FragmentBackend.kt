@@ -25,6 +25,7 @@ import kotlinx.android.synthetic.main.item_backend_good.view.*
 import kotlinx.android.synthetic.main.layout_backend_list.view.*
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import timber.log.Timber
+import kotlin.math.roundToInt
 
 class FragmentBackend : FragmentGoods() {
 
@@ -47,7 +48,7 @@ class FragmentBackend : FragmentGoods() {
             this.adapter = adapterGoods
         }
         disposables += view.backendFabNewGood.clicks().subscribeBy(Timber::e) {
-            viewModel(Action.Admin.ShowGoodEditScreen(null, 0f, 0f))
+            viewModel(Action.Admin.ShowGoodEditScreen(null, 0, 0f))
         }
         disposables += fragmentItemEditor.cancelClicks().subscribeBy(Timber::e) {
             viewModel(Action.Admin.HideGoodEditScreen)
@@ -65,8 +66,9 @@ class FragmentBackend : FragmentGoods() {
         when (state) {
             is Success.ItemsFetched<Good> -> hideGoodEditor()
             is Mutation -> showGoodEditor(state.item, state.y, state.height)
+            is MutationFinished -> hideGoodEditor(state.y, state.height)
             is Error -> context?.showError(state.throwable)
-            is Loading.Goods, is MutationFinished -> hideGoodEditor()
+            is Loading.Goods -> hideGoodEditor()
         }
     }
 
@@ -79,11 +81,11 @@ class FragmentBackend : FragmentGoods() {
         itemAdminTextviewPrice.text = item.metadata?.displayPrice
         itemAdminTextviewQuantity.text = item.metadata?.displayQuantity
         view.setOnClickListener {
-            viewModel(Action.Admin.ShowGoodEditScreen(item, view.y, view.height.toFloat()))
+            viewModel(Action.Admin.ShowGoodEditScreen(item, view.y.roundToInt(), view.height.toFloat()))
         }
     }
 
-    private fun showGoodEditor(good: Good?, y: Float, height: Float) {
+    private fun showGoodEditor(good: Good?, y: Int, height: Float) {
         childFragmentManager.transaction {
             if (childFragmentManager.findFragmentByTag(editorTag) == null) {
                 add(R.id.backendFrameLayoutContainer, fragmentItemEditor, editorTag)
@@ -100,9 +102,9 @@ class FragmentBackend : FragmentGoods() {
         }
     }
 
-    private fun hideGoodEditor() {
+    private fun hideGoodEditor(y: Int = 0, height: Float = 0f) {
         animateOverlay(false)
-        fragmentItemEditor.hide {
+        fragmentItemEditor.hide(y, height) {
             childFragmentManager.transaction {
                 hide(fragmentItemEditor)
                 isShowingEditor = false

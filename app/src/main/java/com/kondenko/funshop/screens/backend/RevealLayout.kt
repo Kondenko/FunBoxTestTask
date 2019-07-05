@@ -34,15 +34,25 @@ class RevealScrollView @JvmOverloads constructor(
 
     private val originalTop: Int by lazy { top }
 
-    fun reveal(initialHeight: Float, initialTop: Float, content: ViewGroup) {
+    fun reveal(initialHeight: Float, initialTop: Int, content: ViewGroup) {
         post {
             clipHeightAnimator = createClipHeightAnimator(initialHeight).also(ValueAnimator::start)
             viewTopAnimator = createViewTopAnimator(initialTop).also(ValueAnimator::start)
             contentAlphaAnimator = createContentAlphaAnimator(content).also(ValueAnimator::start)
         }
+        clipHeight = null
+        alpha = 1f
+        top = originalTop
     }
 
-    fun hide(onFinished: () -> Unit) {
+    fun hide(initialHeight: Float, initialTop: Int, content: ViewGroup, onFinished: () -> Unit) {
+        var isReversed = true
+        if (clipHeightAnimator == null || viewTopAnimator == null || contentAlphaAnimator == null) {
+            clipHeightAnimator = createClipHeightAnimator(bottom.toFloat(), initialHeight)
+            viewTopAnimator = createViewTopAnimator(originalTop, initialTop)
+            contentAlphaAnimator = createContentAlphaAnimator(content, reversed = true)
+            isReversed = false
+        }
         clipHeightAnimator?.doOnEnd {
             animate {
                 duration = 100L
@@ -52,11 +62,8 @@ class RevealScrollView @JvmOverloads constructor(
         }
         listOfNotNull(clipHeightAnimator, viewTopAnimator, contentAlphaAnimator).forEach {
             it.interpolator = outInterpolator
-            it.reverse()
+            if (isReversed) it.reverse() else it.start()
         }
-        clipHeight = null
-        alpha = 1f
-        top = originalTop
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -64,8 +71,8 @@ class RevealScrollView @JvmOverloads constructor(
         super.onDraw(canvas)
     }
 
-    private fun createClipHeightAnimator(initialHeight: Float) =
-        ValueAnimator.ofFloat(initialHeight, bottom.toFloat()).apply {
+    private fun createClipHeightAnimator(initialHeight: Float, finalHeight: Float = bottom.toFloat()) =
+        ValueAnimator.ofFloat(initialHeight, finalHeight).apply {
             duration = clipHeightDuration
             interpolator = inInterpolator
             addUpdateListener {
@@ -74,8 +81,8 @@ class RevealScrollView @JvmOverloads constructor(
             }
         }
 
-    private fun createViewTopAnimator(initialTop: Float) =
-        ValueAnimator.ofInt(initialTop.toInt(), originalTop).apply {
+    private fun createViewTopAnimator(initialTop: Int, finalTop: Int = originalTop) =
+        ValueAnimator.ofInt(initialTop, finalTop).apply {
             duration = topTravelDuration
             interpolator = inInterpolator
             addUpdateListener {
@@ -83,8 +90,8 @@ class RevealScrollView @JvmOverloads constructor(
             }
         }
 
-    private fun createContentAlphaAnimator(contentView: ViewGroup) =
-        ValueAnimator.ofFloat(0f, 1f).apply {
+    private fun createContentAlphaAnimator(contentView: ViewGroup, reversed: Boolean = false) =
+        ValueAnimator.ofFloat(reversed.toFloat(), (!reversed).toFloat()).apply {
             duration = contentAlphaDuration
             interpolator = inInterpolator
             addUpdateListener {
@@ -93,5 +100,7 @@ class RevealScrollView @JvmOverloads constructor(
                 }
             }
         }
+
+    private fun Boolean.toFloat() = if (this) 1f else 0f
 
 }

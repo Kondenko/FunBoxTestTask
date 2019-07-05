@@ -52,12 +52,12 @@ class FragmentItemEditor : Fragment() {
 
     fun cancelClicks(): Observable<Unit> = cancelClicks
 
-    fun reveal(y: Float, height: Float) {
+    fun reveal(y: Int, height: Float) {
         view?.backendGoodEditorRevealView?.reveal(height, y, backendGoodEditorLayoutContent)
     }
 
-    fun hide(onFinished: () -> Unit) {
-        view?.backendGoodEditorRevealView?.hide(onFinished)
+    fun hide(y: Int, height: Float, onFinished: () -> Unit) {
+        view?.backendGoodEditorRevealView?.hide(height, y, backendGoodEditorLayoutContent, onFinished)
     }
 
     private fun setupUi() {

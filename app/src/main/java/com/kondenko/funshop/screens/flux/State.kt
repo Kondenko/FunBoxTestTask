@@ -17,9 +17,9 @@ sealed class State<out T>(open val data: List<T>?) {
     /**
      * Indicates the data on the screen is being edited
      */
-    data class Mutation<out T>(val item: T?, override val data: List<T>?, val y: Float, val height: Float) : State<T>(data)
+    data class Mutation<out T>(val item: T?, override val data: List<T>?, val y: Int, val height: Float) : State<T>(data)
 
-    data class MutationFinished<T>(override val data: List<T>?, val y: Float, val height: Float) : State<T>(data)
+    data class MutationFinished<T>(override val data: List<T>?, val y: Int, val height: Float) : State<T>(data)
 
     object Empty : State<Nothing>(null)
 
