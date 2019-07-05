@@ -31,8 +31,8 @@ fun ViewPropertyAnimator.scale(value: Float): ViewPropertyAnimator = scaleX(valu
 
 inline fun <reified T> ValueAnimator.animatedValue() = animatedValue as T
 
-inline fun View.animate(animation: ViewPropertyAnimator.() -> ViewPropertyAnimator) {
-    animate().animation().start()
+inline fun View.animate(animation: ViewPropertyAnimator.() -> Unit) {
+    animate().apply(animation).start()
 }
 
 fun Matcher.allSubgroups(): Map<String?, String?> {
@@ -67,8 +67,8 @@ fun InputStream.parseLines(publisher: Subscriber<in String>) {
     }
 }
 
-inline fun FragmentManager.transaction(actions: FragmentTransaction.() -> FragmentTransaction) =
-        beginTransaction().actions().commit()
+inline fun FragmentManager.transaction(actions: FragmentTransaction.() -> Unit) =
+        beginTransaction().apply(actions).commit()
 
 inline fun <reified T> Iterable<Any>.find(): T? = find { it is T } as? T
 

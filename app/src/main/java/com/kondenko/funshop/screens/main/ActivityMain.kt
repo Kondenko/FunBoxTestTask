@@ -60,19 +60,19 @@ class ActivityMain : AppCompatActivity() {
 
     private fun setFragment(fragment: Fragment, tag: String) {
         selectedTag = tag
-        val duration: Long = 75
+        val duration: Long = 100
         framelayout_container.animateOut(duration) {
             supportFragmentManager.transaction {
-                replace(R.id.framelayout_container, fragment, tag)
+                if (!supportFragmentManager.isStateSaved) replace(R.id.framelayout_container, fragment, tag)
+                it.animateIn(duration)
             }
-            it.animateIn(duration)
         }
     }
 
     private fun View.animateOut(duration: Long, endAction: (View) -> Unit) = animate {
         this.duration = duration
         interpolator = AccelerateInterpolator()
-        scale(0.985f)
+        scale(0.99f)
         alpha(0f)
         withEndAction { endAction(this@animateOut) }
     }
