@@ -53,7 +53,7 @@ class GoodsViewModelImpl(
     override fun invoke(action: Action.Admin) {
         val currentState = state.value
         when (action) {
-            is Action.Admin.Create -> {
+            is Action.Admin.EditOrCreate -> {
                 disposables += addOrUpdateGood(action.good).subscribeBy(
                     onComplete = { invoke(Action.Admin.HideGoodEditScreen) },
                     onError = { setErrorState(it, currentState) }

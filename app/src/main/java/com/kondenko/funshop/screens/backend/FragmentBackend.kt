@@ -54,7 +54,7 @@ class FragmentBackend : FragmentGoods() {
             viewModel(Action.Admin.HideGoodEditScreen)
         }
         disposables += fragmentItemEditor.saveClicks().subscribeBy(Timber::e) {
-            viewModel(Action.Admin.Create(it))
+            viewModel(Action.Admin.EditOrCreate(it))
         }
     }
 

@@ -9,17 +9,17 @@ class GoodsRepository(
 ) {
 
     fun getGoods() = goodsDao.getGoods()
-        .map {
-            it.map {
-                it.copy(
-                    metadata = Metadata(
-                        displayPrice = stringFormatter.formatPrice(it.price),
-                        displayQuantity = stringFormatter.formatQuantity(it.quantity),
-                        isBeingProcessed = false
-                    )
-                )
-            }
-        }
+        .map { it.addMetadata() }
+
+    private fun List<Good>.addMetadata() = map {
+        it.copy(
+            metadata = Metadata(
+                displayPrice = stringFormatter.formatPrice(it.price),
+                displayQuantity = stringFormatter.formatQuantity(it.quantity),
+                isBeingProcessed = false
+            )
+        )
+    }
 
     fun addOrUpdate(good: Good) = good.run {
         if (id == null) goodsDao.insert(this)

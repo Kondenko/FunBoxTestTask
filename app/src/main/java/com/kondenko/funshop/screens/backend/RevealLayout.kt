@@ -12,7 +12,7 @@ import androidx.core.view.children
 import com.kondenko.funshop.utils.animate
 import com.kondenko.funshop.utils.animatedValue
 
-class RevealView @JvmOverloads constructor(
+class RevealScrollView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
@@ -35,9 +35,6 @@ class RevealView @JvmOverloads constructor(
     private val originalTop: Int by lazy { top }
 
     fun reveal(initialHeight: Float, initialTop: Float, content: ViewGroup) {
-        clipHeight = 0f
-        alpha = 1f
-        top = originalTop
         post {
             clipHeightAnimator = createClipHeightAnimator(initialHeight).also(ValueAnimator::start)
             viewTopAnimator = createViewTopAnimator(initialTop).also(ValueAnimator::start)
@@ -57,6 +54,9 @@ class RevealView @JvmOverloads constructor(
             it.interpolator = outInterpolator
             it.reverse()
         }
+        clipHeight = 0f
+        alpha = 1f
+        top = originalTop
     }
 
     override fun onDraw(canvas: Canvas?) {

@@ -13,7 +13,7 @@ sealed class Action {
         data class ShowGoodEditScreen(val good: Good?, val x: Float, val height: Float) : Admin()
         object HideGoodEditScreen : Admin()
         object GoBack : Admin()
-        data class Create(val good: Good) : Admin()
+        data class EditOrCreate(val good: Good) : Admin()
     }
 
 }
