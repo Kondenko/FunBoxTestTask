@@ -38,8 +38,8 @@ class FragmentBackend : FragmentGoods() {
 
     private var editorFragmentAdded = false
 
-    var isShowingEditor = true
-        private set
+    val isShowingEditor
+        get() = fragmentItemEditor.isVisible
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -85,31 +85,25 @@ class FragmentBackend : FragmentGoods() {
     }
 
     private fun showGoodEditor(good: Good?, y: Float, height: Float) {
-        if (!isShowingEditor) {
-            isShowingEditor = true
-            childFragmentManager.transaction {
-                if (!editorFragmentAdded) {
-                    add(R.id.backendFrameLayoutContainer, fragmentItemEditor)
-                    editorFragmentAdded = true
-                }
-                show(fragmentItemEditor)
-                runOnCommit {
-                    animateOverlay(true)
-                    fragmentItemEditor.reveal(y, height)
-                }
+        childFragmentManager.transaction {
+            if (!editorFragmentAdded) {
+                add(R.id.backendFrameLayoutContainer, fragmentItemEditor)
+                editorFragmentAdded = true
             }
-            fragmentItemEditor.setGood(good)
+            show(fragmentItemEditor)
+            runOnCommit {
+                animateOverlay(true)
+                fragmentItemEditor.reveal(y, height)
+            }
         }
+        fragmentItemEditor.setGood(good)
     }
 
     private fun hideGoodEditor() {
-        if (isShowingEditor) {
-            isShowingEditor = false
-            animateOverlay(false)
-            fragmentItemEditor.hide {
-                childFragmentManager.transaction {
-                    hide(fragmentItemEditor)
-                }
+        animateOverlay(false)
+        fragmentItemEditor.hide {
+            childFragmentManager.transaction {
+                hide(fragmentItemEditor)
             }
         }
     }
