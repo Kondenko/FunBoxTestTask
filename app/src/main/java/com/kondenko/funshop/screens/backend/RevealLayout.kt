@@ -1,16 +1,15 @@
 package com.kondenko.funshop.screens.backend
 
-import android.animation.Animator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.ViewGroup
-import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.ScrollView
+import androidx.core.animation.doOnEnd
 import androidx.core.view.children
-import androidx.core.view.isVisible
+import com.kondenko.funshop.utils.animate
 import com.kondenko.funshop.utils.animatedValue
 
 class RevealView @JvmOverloads constructor(
@@ -21,41 +20,43 @@ class RevealView @JvmOverloads constructor(
 ) : ScrollView(context, attrs, defStyleAttr, defStyleRes) {
 
     private val topTravelDuration: Long = 200
-
     private val clipHeightDuration = topTravelDuration + 100
-
     private val contentAlphaDuration: Long = topTravelDuration
 
     private val inInterpolator = DecelerateInterpolator()
-    private val outInterpolator = AccelerateInterpolator()
+    private val outInterpolator = DecelerateInterpolator()
+
+    private var clipHeightAnimator: ValueAnimator? = null
+    private var viewTopAnimator: ValueAnimator? = null
+    private var contentAlphaAnimator: ValueAnimator? = null
 
     private var clipHeight: Float = 0f
-
-    private var shapeAnimators: List<ValueAnimator>? = null
 
     private val originalTop: Int by lazy { top }
 
     fun reveal(initialHeight: Float, initialTop: Float, content: ViewGroup) {
+        clipHeight = 0f
+        alpha = 1f
+        top = originalTop
         post {
-            shapeAnimators = listOf(
-                createClipHeightAnimator(initialHeight),
-                createViewTopAnimator(initialTop),
-                createContentAlphaAnimator(content)
-            ).apply { forEach(Animator::start) }
+            clipHeightAnimator = createClipHeightAnimator(initialHeight).also(ValueAnimator::start)
+            viewTopAnimator = createViewTopAnimator(initialTop).also(ValueAnimator::start)
+            contentAlphaAnimator = createContentAlphaAnimator(content).also(ValueAnimator::start)
         }
     }
 
     fun hide(onFinished: () -> Unit) {
-        shapeAnimators?.forEach {
+        clipHeightAnimator?.doOnEnd {
+            animate {
+                duration = 100L
+                alpha(0f)
+                withEndAction(onFinished)
+            }
+        }
+        listOfNotNull(clipHeightAnimator, viewTopAnimator, contentAlphaAnimator).forEach {
             it.interpolator = outInterpolator
             it.reverse()
         }
-        // Trigger the onFinished callback after all animations have completed
-        // without introducing concurrency
-        postDelayed(onFinished, shapeAnimators?.map { it.duration }?.min() ?: 0L)
-        clipHeight = 0f
-        top = originalTop
-        isVisible = true
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -68,7 +69,7 @@ class RevealView @JvmOverloads constructor(
             duration = clipHeightDuration
             interpolator = inInterpolator
             addUpdateListener {
-                clipHeight = it.animatedValue()
+                clipHeight = animatedValue()
                 invalidate()
             }
         }
@@ -78,7 +79,7 @@ class RevealView @JvmOverloads constructor(
             duration = topTravelDuration
             interpolator = inInterpolator
             addUpdateListener {
-                top = it.animatedValue()
+                top = animatedValue()
             }
         }
 
@@ -86,9 +87,9 @@ class RevealView @JvmOverloads constructor(
         ValueAnimator.ofFloat(0f, 1f).apply {
             duration = contentAlphaDuration
             interpolator = inInterpolator
-            addUpdateListener { animator ->
+            addUpdateListener {
                 contentView.children.forEach {
-                    it.alpha = animator.animatedValue()
+                    it.alpha = animatedValue()
                 }
             }
         }

@@ -93,10 +93,10 @@ class FragmentBackend : FragmentGoods() {
                     editorFragmentAdded = true
                 }
                 show(fragmentItemEditor)
-                setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-            }
-            animateOverlay(true) {
-                fragmentItemEditor.reveal(y, height)
+                runOnCommit {
+                    animateOverlay(true)
+                    fragmentItemEditor.reveal(y, height)
+                }
             }
             fragmentItemEditor.setGood(good)
         }
@@ -105,21 +105,20 @@ class FragmentBackend : FragmentGoods() {
     private fun hideGoodEditor() {
         if (isShowingEditor) {
             isShowingEditor = false
+            animateOverlay(false)
             fragmentItemEditor.hide {
-                animateOverlay(false) {}
                 childFragmentManager.transaction {
                     hide(fragmentItemEditor)
-                    setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
                 }
             }
         }
     }
 
-    private fun animateOverlay(show: Boolean, onFinished: () -> Unit) = view?.backendListCover?.animate {
+    private fun animateOverlay(show: Boolean) = view?.backendListCover?.animate {
         duration = 200L
         interpolator = if (show) DecelerateInterpolator() else AccelerateInterpolator() as TimeInterpolator
         alpha(if (show) 1f else 0f)
-        withEndAction(onFinished)
+        withLayer()
     }
 
 }

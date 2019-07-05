@@ -31,7 +31,7 @@ fun ViewPropertyAnimator.scale(value: Float): ViewPropertyAnimator = scaleX(valu
 
 inline fun <reified T> ValueAnimator.animatedValue() = animatedValue as T
 
-fun View.animate(animation: ViewPropertyAnimator.() -> ViewPropertyAnimator) {
+inline fun View.animate(animation: ViewPropertyAnimator.() -> ViewPropertyAnimator) {
     animate().animation().start()
 }
 
