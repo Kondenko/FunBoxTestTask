@@ -30,7 +30,7 @@ class RevealScrollView @JvmOverloads constructor(
     private var viewTopAnimator: ValueAnimator? = null
     private var contentAlphaAnimator: ValueAnimator? = null
 
-    private var clipHeight: Float = 0f
+    private var clipHeight: Float? = null
 
     private val originalTop: Int by lazy { top }
 
@@ -54,13 +54,13 @@ class RevealScrollView @JvmOverloads constructor(
             it.interpolator = outInterpolator
             it.reverse()
         }
-        clipHeight = 0f
+        clipHeight = null
         alpha = 1f
         top = originalTop
     }
 
     override fun onDraw(canvas: Canvas?) {
-        canvas?.clipRect(0f, 0f, width.toFloat(), clipHeight)
+        clipHeight?.let { canvas?.clipRect(0f, 0f, width.toFloat(), it) }
         super.onDraw(canvas)
     }
 
