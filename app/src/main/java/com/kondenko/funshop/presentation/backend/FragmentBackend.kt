@@ -98,18 +98,20 @@ class FragmentBackend : FragmentGoods() {
                     animateOverlay(true)
                     fragmentItemEditor.reveal(y, height)
                 }
+                isShowingEditor = true
             }
         }
-        isShowingEditor = true
         fragmentItemEditor.setGood(good)
     }
 
     private fun hideGoodEditor(y: Int = 0, height: Float = 0f) {
         animateOverlay(false)
-        fragmentItemEditor.hide(y, height) {
-            childFragmentManager.transaction {
-                hide(fragmentItemEditor)
-                isShowingEditor = false
+        if (isShowingEditor) {
+            fragmentItemEditor.hide(y, height) {
+                childFragmentManager.transaction {
+                    hide(fragmentItemEditor)
+                    isShowingEditor = false
+                }
             }
         }
     }
