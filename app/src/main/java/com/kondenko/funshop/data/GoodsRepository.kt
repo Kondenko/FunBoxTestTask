@@ -2,9 +2,15 @@ package com.kondenko.funshop.data
 
 import com.kondenko.funshop.entities.Good
 import com.kondenko.funshop.entities.Metadata
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.rxkotlin.toObservable
+import io.reactivex.schedulers.Schedulers
+import timber.log.Timber
 
 class GoodsRepository(
     private val goodsDao: GoodsDao,
+    private val initialGoodsProvider: GoodsProvider,
     private val stringFormatter: StringFormatter
 ) {
 
@@ -27,5 +33,17 @@ class GoodsRepository(
     }
 
     fun update(good: Good) = goodsDao.insert(good)
+
+    fun prepopulateDatabase() =
+        initialGoodsProvider
+            .getGoods()
+            .flatMap { it.toObservable() }
+            .flatMapCompletable { goodsDao.insert(it) }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onComplete = { Timber.d("Database populated") },
+                onError = { Timber.e(it, "Error populating the database") }
+            )
 
 }

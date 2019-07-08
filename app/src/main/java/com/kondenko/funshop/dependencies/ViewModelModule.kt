@@ -1,5 +1,6 @@
 package com.kondenko.funshop.dependencies
 
+import com.kondenko.funshop.data.CsvGoodsProvider
 import com.kondenko.funshop.data.GoodsRepository
 import com.kondenko.funshop.data.StringFormatter
 import com.kondenko.funshop.domain.AddOrUpdateGood
@@ -12,11 +13,12 @@ import org.koin.dsl.module
 
 object ViewModelModule : ModuleCreator {
     override fun create() = module {
+        single { CsvGoodsProvider(androidContext()) }
         single { StringFormatter(androidContext()) }
-        single { GoodsRepository(get(), get()) }
-        single { AddOrUpdateGood(get(), get()) }
-        single { BuyGood(get(), get()) }
-        single { GetGoods(get(), get()) }
-        viewModel { GoodsViewModelImpl(get(), get(), get()) }
+        single { GoodsRepository(goodsDao = get(), initialGoodsProvider = get<CsvGoodsProvider>(), stringFormatter = get()) }
+        single { AddOrUpdateGood(goodsRepository = get(), schedulers = get()) }
+        single { BuyGood(goodsRepository = get(), schedulers = get()) }
+        single { GetGoods(goodsRepository = get(), schedulers = get()) }
+        viewModel { GoodsViewModelImpl(getGoods = get(), addOrUpdateGood = get(), buyGood = get()) }
     }
 }
