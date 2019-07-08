@@ -14,9 +14,9 @@
 
 ## Как устроено приложение
 
-В FunShop два экрана с похожими функциями — "показать все товары" и "изменить товар". Они оба управляются классом GoodsViewModelImpl, чтобы не дублировать код и избежать проблем с синхронизацией состояния. Каждый экран реагирует только на те состояния, которые для него актуальны.
+В FunShop два экрана с похожими функциями — "показать все товары" и "изменить товар". Они оба управляются классом [GoodsViewModelImpl](https://github.com/Kondenko/FunBoxTestTask/blob/master/app/src/main/java/com/kondenko/funshop/presentation/viewmodel/GoodsViewModelImpl.kt), чтобы не дублировать код и избежать проблем с синхронизацией состояния. Каждый экран реагирует только на те состояния, которые для него актуальны.
 
-Во фрагментах FragmentStore и FragmentBackend я использую ViewModel через соответствующие интерфейсы. Это позволяет разграничить действия, которые можно сделать на каждом экране. 
+Во фрагментах [FragmentStore](https://github.com/Kondenko/FunBoxTestTask/blob/master/app/src/main/java/com/kondenko/funshop/presentation/store/FragmentStore.kt) и [FragmentBackend](https://github.com/Kondenko/FunBoxTestTask/blob/master/app/src/main/java/com/kondenko/funshop/presentation/backend/FragmentBackend.kt) я использую ViewModel через соответствующие интерфейсы. Это позволяет разграничить действия, которые можно сделать на каждом экране. 
 
 Библиотека ViewPager2 тоже помогла сократить дублирование кода — один и тот же адаптер подходит и для RecyclerView, и для ViewPager. 
 
