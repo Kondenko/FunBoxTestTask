@@ -33,9 +33,8 @@ fun ViewPropertyAnimator.scale(value: Float): ViewPropertyAnimator = scaleX(valu
 
 inline fun <reified T> ValueAnimator.animatedValue() = animatedValue as T
 
-inline fun View.animate(animation: ViewPropertyAnimator.() -> Unit) {
-    animate().apply(animation).start()
-}
+inline fun View.animate(animation: ViewPropertyAnimator.() -> Unit): ViewPropertyAnimator =
+    animate().apply(animation).apply { start() }
 
 fun Matcher.allSubgroups(): Map<String?, String?> {
     val groups = mutableMapOf<String?, String?>()

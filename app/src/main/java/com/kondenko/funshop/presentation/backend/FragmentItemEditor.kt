@@ -1,9 +1,12 @@
 package com.kondenko.funshop.presentation.backend
 
+import android.animation.ValueAnimator
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.DecelerateInterpolator
+import androidx.core.animation.doOnCancel
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputLayout
@@ -12,6 +15,7 @@ import com.jakewharton.rxbinding3.widget.textChanges
 import com.kondenko.funshop.R
 import com.kondenko.funshop.entities.Good
 import com.kondenko.funshop.utils.KOptional
+import com.kondenko.funshop.utils.animatedValue
 import com.kondenko.funshop.utils.find
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
@@ -33,6 +37,8 @@ class FragmentItemEditor : Fragment() {
     private val saveClicks = PublishSubject.create<Good>()
     private val cancelClicks = PublishSubject.create<Unit>()
 
+    private var pulsationAnimator: ValueAnimator? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedState: Bundle?): View =
         inflater.inflate(R.layout.fragment_backend_good, container, false)
 
@@ -51,6 +57,28 @@ class FragmentItemEditor : Fragment() {
     fun saveClicks(): Observable<Good> = saveClicks
 
     fun cancelClicks(): Observable<Unit> = cancelClicks
+
+    fun setLoading(isLoading: Boolean) {
+        view?.backendButtonSave?.apply {
+            isEnabled = !isLoading
+            if (isLoading) pulsate()
+            else pulsationAnimator?.cancel()
+        }
+    }
+
+    private fun View.pulsate() {
+        val originalAlpha = alpha
+        val alphaLow = (alpha / 2).coerceAtLeast(0f)
+        pulsationAnimator = ValueAnimator.ofFloat(alpha, alphaLow).apply {
+            addUpdateListener { alpha = animatedValue() }
+            doOnCancel { alpha = originalAlpha }
+            repeatMode = ValueAnimator.REVERSE
+            repeatCount = ValueAnimator.INFINITE
+            interpolator = DecelerateInterpolator()
+            duration = 600
+            start()
+        }
+    }
 
     fun reveal(y: Int, height: Float) {
         view?.backendGoodEditorRevealView?.reveal(height, y, backendGoodEditorLayoutContent)
@@ -87,6 +115,7 @@ class FragmentItemEditor : Fragment() {
             .filter { it.isNotEmpty() }
             .map { it.value }
             .subscribe(saveClicks)
+
         backendButtonCancel.clicks()
             .subscribe(cancelClicks)
 

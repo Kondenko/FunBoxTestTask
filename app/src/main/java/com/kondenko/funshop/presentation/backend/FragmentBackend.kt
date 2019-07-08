@@ -63,6 +63,7 @@ class FragmentBackend : FragmentGoods() {
     override fun onStateChanged(state: State<Good>) {
         state.data?.let(::updateData)
         view?.backendProgressBar?.isVisible = state is Loading.Goods
+        fragmentItemEditor.setLoading(state is Loading.Mutation)
         when (state) {
             is Success.ItemsFetched<Good> -> hideGoodEditor()
             is Mutation -> showGoodEditor(state.item, state.y, state.height)

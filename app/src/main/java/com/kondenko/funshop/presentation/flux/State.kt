@@ -10,6 +10,7 @@ sealed class State<out T>(open val data: List<T>?) {
     sealed class Loading<T>(override val data: List<T>?) : State<T>(data) {
         object Goods : Loading<Nothing>(null)
         data class Purchase<T>(override val data: List<T>) : Loading<T>(data)
+        data class Mutation<T>(override val data: List<T>?) : Loading<T>(data)
     }
 
     data class Error<T>(val throwable: Throwable, override val data: List<T>? = null) : State<T>(data)

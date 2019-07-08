@@ -54,10 +54,12 @@ class GoodsViewModelImpl(
         val currentState = state.value
         when (action) {
             is Action.Admin.EditOrCreate -> {
-                disposables += addOrUpdateGood(action.good).subscribeBy(
-                    onComplete = { invoke(Action.Admin.HideGoodEditScreen) },
-                    onError = { setErrorState(it, currentState) }
-                )
+                disposables += addOrUpdateGood(action.good)
+                    .doOnSubscribe { setState(Loading.Mutation(currentState?.data)) }
+                    .subscribeBy(
+                        onComplete = { invoke(Action.Admin.HideGoodEditScreen) },
+                        onError = { setErrorState(it, currentState) }
+                    )
             }
             is Action.Admin.ShowGoodEditScreen -> {
                 setState(Mutation(action.good, currentState?.data, action.y, action.height))
