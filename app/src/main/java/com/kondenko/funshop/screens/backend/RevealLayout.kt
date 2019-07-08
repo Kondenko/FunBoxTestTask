@@ -20,7 +20,7 @@ class RevealScrollView @JvmOverloads constructor(
 ) : ScrollView(context, attrs, defStyleAttr, defStyleRes) {
 
     private val topTravelDuration: Long = 200
-    private val clipHeightDuration = topTravelDuration + 100
+    private val clipHeightDuration: Long = topTravelDuration + 100
     private val contentAlphaDuration: Long = topTravelDuration
 
     private val inInterpolator = DecelerateInterpolator()
@@ -30,7 +30,7 @@ class RevealScrollView @JvmOverloads constructor(
     private var viewTopAnimator: ValueAnimator? = null
     private var contentAlphaAnimator: ValueAnimator? = null
 
-    private var clipHeight: Float? = null
+    private var clipHeight: Float = 0f
 
     private val originalTop: Int by lazy { top }
 
@@ -40,7 +40,7 @@ class RevealScrollView @JvmOverloads constructor(
             viewTopAnimator = createViewTopAnimator(initialTop).also(ValueAnimator::start)
             contentAlphaAnimator = createContentAlphaAnimator(content).also(ValueAnimator::start)
         }
-        clipHeight = null
+        clipHeight = 0f
         alpha = 1f
         top = originalTop
     }
@@ -67,7 +67,7 @@ class RevealScrollView @JvmOverloads constructor(
     }
 
     override fun onDraw(canvas: Canvas?) {
-        clipHeight?.let { canvas?.clipRect(0f, 0f, width.toFloat(), it) }
+        canvas?.clipRect(0f, 0f, width.toFloat(), clipHeight)
         super.onDraw(canvas)
     }
 

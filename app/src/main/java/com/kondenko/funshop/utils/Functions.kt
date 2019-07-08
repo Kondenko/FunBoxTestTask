@@ -27,6 +27,8 @@ fun <T> LiveData<T>.subscribe(lifecycleOwner: LifecycleOwner, action: (T) -> Uni
 
 fun <T> Iterable<T>.replace(replacementItem: T, predicate: (T) -> Boolean) = map { if (predicate(it)) replacementItem else it }
 
+inline fun <reified T> Iterable<Any>.find(): T? = find { it is T } as? T
+
 fun ViewPropertyAnimator.scale(value: Float): ViewPropertyAnimator = scaleX(value).scaleY(value)
 
 inline fun <reified T> ValueAnimator.animatedValue() = animatedValue as T
@@ -69,8 +71,6 @@ fun InputStream.parseLines(publisher: Subscriber<in String>) {
 
 inline fun FragmentManager.transaction(actions: FragmentTransaction.() -> Unit) =
         beginTransaction().apply(actions).commit()
-
-inline fun <reified T> Iterable<Any>.find(): T? = find { it is T } as? T
 
 fun View.useAttributes(attrs: AttributeSet?, @StyleableRes styleable: IntArray, defStyleAttr: Int = 0, defStyleRes: Int = 0, actions: TypedArray.() -> Unit) {
     attrs?.let {

@@ -86,20 +86,22 @@ class FragmentBackend : FragmentGoods() {
     }
 
     private fun showGoodEditor(good: Good?, y: Int, height: Float) {
+        val isFragmentAdded = childFragmentManager.findFragmentByTag(editorTag) == null
         childFragmentManager.transaction {
-            if (childFragmentManager.findFragmentByTag(editorTag) == null) {
+            if (isFragmentAdded) {
                 add(R.id.backendFrameLayoutContainer, fragmentItemEditor, editorTag)
+            } else {
+                show(fragmentItemEditor)
             }
-            show(fragmentItemEditor)
             if (!isShowingEditor) {
                 runOnCommit {
                     animateOverlay(true)
                     fragmentItemEditor.reveal(y, height)
                 }
             }
-            isShowingEditor = true
-            fragmentItemEditor.setGood(good)
         }
+        isShowingEditor = true
+        fragmentItemEditor.setGood(good)
     }
 
     private fun hideGoodEditor(y: Int = 0, height: Float = 0f) {
@@ -113,7 +115,7 @@ class FragmentBackend : FragmentGoods() {
     }
 
     private fun animateOverlay(show: Boolean) = view?.backendListCover?.animate {
-        duration = 200L
+        duration = if (show) 400L else 200L
         interpolator = if (show) DecelerateInterpolator() else AccelerateInterpolator() as TimeInterpolator
         alpha(if (show) 1f else 0f)
         withLayer()
