@@ -1,4 +1,4 @@
-package com.kondenko.funshop.screens.main
+package com.kondenko.funshop.presentation.main
 
 import android.os.Bundle
 import android.view.View
@@ -7,9 +7,9 @@ import android.view.animation.DecelerateInterpolator
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.kondenko.funshop.R
-import com.kondenko.funshop.screens.backend.FragmentBackend
-import com.kondenko.funshop.screens.store.FragmentStore
-import com.kondenko.funshop.screens.viewmodel.GoodsViewModelImpl
+import com.kondenko.funshop.presentation.backend.FragmentBackend
+import com.kondenko.funshop.presentation.store.FragmentStore
+import com.kondenko.funshop.presentation.viewmodel.GoodsViewModelImpl
 import com.kondenko.funshop.utils.animate
 import com.kondenko.funshop.utils.scale
 import com.kondenko.funshop.utils.transaction

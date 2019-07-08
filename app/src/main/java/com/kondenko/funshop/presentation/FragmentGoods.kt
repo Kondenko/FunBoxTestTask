@@ -1,4 +1,4 @@
-package com.kondenko.funshop.screens
+package com.kondenko.funshop.presentation
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.annotation.CallSuper
 import androidx.fragment.app.Fragment
 import com.kondenko.funshop.entities.Good
-import com.kondenko.funshop.screens.flux.State
-import com.kondenko.funshop.screens.viewmodel.GoodsViewModelImpl
+import com.kondenko.funshop.presentation.flux.State
+import com.kondenko.funshop.presentation.viewmodel.GoodsViewModelImpl
 import com.kondenko.funshop.utils.subscribe
 import io.reactivex.disposables.CompositeDisposable
 import org.koin.android.ext.android.inject

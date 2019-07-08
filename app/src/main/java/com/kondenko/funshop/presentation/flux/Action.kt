@@ -1,4 +1,4 @@
-package com.kondenko.funshop.screens.flux
+package com.kondenko.funshop.presentation.flux
 
 import com.kondenko.funshop.entities.Good
 

@@ -1,4 +1,4 @@
-package com.kondenko.funshop.screens.store
+package com.kondenko.funshop.presentation.store
 
 import android.os.Bundle
 import android.view.View
@@ -11,12 +11,12 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.kondenko.funshop.R
 import com.kondenko.funshop.entities.Good
-import com.kondenko.funshop.screens.AdapterGoods
-import com.kondenko.funshop.screens.FragmentGoods
-import com.kondenko.funshop.screens.flux.Action
-import com.kondenko.funshop.screens.flux.State
-import com.kondenko.funshop.screens.viewmodel.BuyerViewModel
-import com.kondenko.funshop.screens.viewmodel.GoodsViewModelImpl
+import com.kondenko.funshop.presentation.AdapterGoods
+import com.kondenko.funshop.presentation.FragmentGoods
+import com.kondenko.funshop.presentation.flux.Action
+import com.kondenko.funshop.presentation.flux.State
+import com.kondenko.funshop.presentation.viewmodel.BuyerViewModel
+import com.kondenko.funshop.presentation.viewmodel.GoodsViewModelImpl
 import com.kondenko.funshop.utils.animate
 import com.kondenko.funshop.utils.showError
 import kotlinx.android.synthetic.main.fragment_store.view.*

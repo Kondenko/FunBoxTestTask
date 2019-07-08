@@ -1,4 +1,4 @@
-package com.kondenko.funshop.screens.flux
+package com.kondenko.funshop.presentation.flux
 
 sealed class State<out T>(open val data: List<T>?) {
 

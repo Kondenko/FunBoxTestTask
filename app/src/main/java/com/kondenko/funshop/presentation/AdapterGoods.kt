@@ -1,4 +1,4 @@
-package com.kondenko.funshop.screens
+package com.kondenko.funshop.presentation
 
 import android.content.Context
 import android.view.View

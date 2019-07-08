@@ -1,4 +1,4 @@
-package com.kondenko.funshop.screens.backend
+package com.kondenko.funshop.presentation.backend
 
 import android.animation.TimeInterpolator
 import android.os.Bundle
@@ -10,12 +10,12 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import com.jakewharton.rxbinding3.view.clicks
 import com.kondenko.funshop.R
 import com.kondenko.funshop.entities.Good
-import com.kondenko.funshop.screens.FragmentGoods
-import com.kondenko.funshop.screens.flux.Action
-import com.kondenko.funshop.screens.flux.State
-import com.kondenko.funshop.screens.flux.State.*
-import com.kondenko.funshop.screens.viewmodel.AdminViewModel
-import com.kondenko.funshop.screens.viewmodel.GoodsViewModelImpl
+import com.kondenko.funshop.presentation.FragmentGoods
+import com.kondenko.funshop.presentation.flux.Action
+import com.kondenko.funshop.presentation.flux.State
+import com.kondenko.funshop.presentation.flux.State.*
+import com.kondenko.funshop.presentation.viewmodel.AdminViewModel
+import com.kondenko.funshop.presentation.viewmodel.GoodsViewModelImpl
 import com.kondenko.funshop.utils.animate
 import com.kondenko.funshop.utils.showError
 import com.kondenko.funshop.utils.transaction

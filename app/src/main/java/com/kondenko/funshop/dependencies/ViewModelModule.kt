@@ -6,7 +6,7 @@ import com.kondenko.funshop.data.StringFormatter
 import com.kondenko.funshop.domain.AddOrUpdateGood
 import com.kondenko.funshop.domain.BuyGood
 import com.kondenko.funshop.domain.GetGoods
-import com.kondenko.funshop.screens.viewmodel.GoodsViewModelImpl
+import com.kondenko.funshop.presentation.viewmodel.GoodsViewModelImpl
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module

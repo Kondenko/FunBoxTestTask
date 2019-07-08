@@ -1,8 +1,8 @@
-package com.kondenko.funshop.screens.viewmodel
+package com.kondenko.funshop.presentation.viewmodel
 
 import androidx.lifecycle.LiveData
 import com.kondenko.funshop.entities.Good
-import com.kondenko.funshop.screens.flux.State
+import com.kondenko.funshop.presentation.flux.State
 
 interface GoodsViewModel {
 

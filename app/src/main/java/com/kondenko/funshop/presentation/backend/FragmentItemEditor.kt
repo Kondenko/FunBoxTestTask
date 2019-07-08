@@ -1,4 +1,4 @@
-package com.kondenko.funshop.screens.backend
+package com.kondenko.funshop.presentation.backend
 
 import android.os.Bundle
 import android.view.LayoutInflater

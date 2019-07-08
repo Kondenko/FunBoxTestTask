@@ -1,4 +1,4 @@
-package com.kondenko.funshop.screens.viewmodel
+package com.kondenko.funshop.presentation.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -7,9 +7,9 @@ import com.kondenko.funshop.domain.AddOrUpdateGood
 import com.kondenko.funshop.domain.BuyGood
 import com.kondenko.funshop.domain.GetGoods
 import com.kondenko.funshop.entities.Good
-import com.kondenko.funshop.screens.flux.Action
-import com.kondenko.funshop.screens.flux.State
-import com.kondenko.funshop.screens.flux.State.*
+import com.kondenko.funshop.presentation.flux.Action
+import com.kondenko.funshop.presentation.flux.State
+import com.kondenko.funshop.presentation.flux.State.*
 import com.kondenko.funshop.utils.replace
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign

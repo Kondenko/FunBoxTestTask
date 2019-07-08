@@ -1,4 +1,4 @@
-package com.kondenko.funshop.screens.backend
+package com.kondenko.funshop.presentation.backend
 
 import android.animation.ValueAnimator
 import android.content.Context
